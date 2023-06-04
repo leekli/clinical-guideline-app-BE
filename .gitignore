@@ -1,0 +1,6 @@
+node_modules/
+data/guideline-data/
+data/test-data/
+.env
+.env.*
+.DS_Store
