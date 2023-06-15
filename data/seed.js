@@ -2,6 +2,8 @@ require("dotenv").config();
 const mongoose = require("mongoose");
 const readFormatFiles = require("./readFormatFiles");
 const guidelineSchema = require("../schemas/GuidelineSchema.js");
+const userSchema = require("../schemas/UserSchema.js");
+const usersData = require("./user-data/users");
 const ENV = process.env.NODE_ENV || "development";
 
 require("dotenv").config({
@@ -21,6 +23,10 @@ async function seed() {
     await guidelineSchema.deleteMany({});
 
     await guidelineSchema.insertMany(guidelinesData);
+
+    await userSchema.deleteMany({});
+
+    await userSchema.insertMany(usersData);
 
     await mongoose.connection.close();
   });

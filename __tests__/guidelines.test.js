@@ -17,7 +17,7 @@ afterAll(async () => {
   await mongoose.connection.close();
 });
 
-describe("Clinical Guideline API tests", () => {
+describe("Clinical Guideline API tests for /guidelines", () => {
   describe("GET Requests", () => {
     test("GET /api/guidelines: should return 200 and all guidelines", async () => {
       const res = await request(app).get("/api/guidelines").expect(200);

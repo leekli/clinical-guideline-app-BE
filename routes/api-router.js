@@ -1,5 +1,6 @@
 const { getApiHome } = require("../controllers/api.controller");
 const guidelinesRouter = require("./guidelines-router");
+const usersRouter = require("./users-router");
 
 const apiRouter = require("express").Router();
 
@@ -8,5 +9,8 @@ apiRouter.get("/", getApiHome);
 
 // Routes for /api/guidelines
 apiRouter.use("/guidelines", guidelinesRouter);
+
+// Routes for /api/users
+apiRouter.use("/users", usersRouter);
 
 module.exports = apiRouter;
