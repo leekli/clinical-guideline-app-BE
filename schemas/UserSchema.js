@@ -12,20 +12,26 @@ const userSchema = new mongoose.Schema({
   preferredName: {
     type: String,
   },
+  jobTitle: {
+    type: String,
+  },
   userName: {
     type: String,
     required: true,
+  },
+  password: {
+    type: String,
   },
   emailAddress: {
     type: String,
     required: true,
   },
   primaryAccessLevel: {
-    type: String,
+    type: Array,
     required: true,
   },
   secondaryAccessLevel: {
-    type: String,
+    type: Array,
   },
   dateAccountCreated: {
     type: Date,

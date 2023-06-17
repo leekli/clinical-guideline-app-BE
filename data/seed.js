@@ -20,9 +20,15 @@ async function seed() {
 
     const guidelinesData = await readFormatFiles();
 
+    const { guidelines, users } = mongoose.connection.collections;
+
+    await guidelines.drop(() => {});
+
     await guidelineSchema.deleteMany({});
 
     await guidelineSchema.insertMany(guidelinesData);
+
+    await users.drop(() => {});
 
     await userSchema.deleteMany({});
 

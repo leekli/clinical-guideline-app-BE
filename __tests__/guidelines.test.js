@@ -6,7 +6,7 @@ const seed = require("../data/seed");
 beforeAll(async () => {
   await seed();
 
-  console.log("🌱 Seeding complete on TEST Database");
+  console.log(`🌱 Seeding complete on ${process.env.NODE_ENV} Database`);
 
   await mongoose.connect(process.env.DATABASE_URL);
 
