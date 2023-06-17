@@ -1,7 +1,15 @@
 const guidelineSchema = require("../schemas/GuidelineSchema.js");
 
-exports.findAllGuidelines = async () => {
-  const guidelines = await guidelineSchema.find({});
+exports.findAllGuidelines = async (search) => {
+  let guidelines;
+
+  if (!search || search.length === 0) {
+    guidelines = await guidelineSchema.find({});
+  } else {
+    guidelines = await guidelineSchema.find({
+      LongTitle: { $regex: search, $options: "i" },
+    });
+  }
 
   return guidelines;
 };

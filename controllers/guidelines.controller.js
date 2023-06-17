@@ -8,7 +8,9 @@ const {
 
 exports.getGuidelines = async (req, res, next) => {
   try {
-    const guidelines = await findAllGuidelines();
+    const { search } = req.query;
+
+    const guidelines = await findAllGuidelines(search);
 
     res.status(200).send({ guidelines });
   } catch (err) {

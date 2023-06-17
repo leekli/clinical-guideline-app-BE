@@ -56,6 +56,62 @@ describe("Clinical Guideline API tests for /guidelines", () => {
         "Cardiovascular disease: risk assessment and reduction, including lipid modification (CG181)"
       );
     });
+    test("Returns status 200 and single relevant guideline when used with a search param on /api/guidelines?search=dia", async () => {
+      const res = await request(app)
+        .get("/api/guidelines?search=diabetes")
+        .expect(200);
+      expect(res.body.guidelines).toBeInstanceOf(Array);
+      expect(res.body.guidelines).toHaveLength(1);
+      expect(res.body.guidelines[0]).toMatchObject({
+        GuidanceNumber: "NG18",
+        GuidanceSlug:
+          "diabetes-type-1-and-type-2-in-children-and-young-people-diagnosis-and-ng18",
+        LongTitle:
+          "Diabetes (type 1 and type 2) in children and young people: diagnosis and management (NG18)",
+      });
+    });
+    test("Returns status 200 and single relevant guideline when used with a search param on /api/guidelines?search=covid", async () => {
+      const res = await request(app)
+        .get("/api/guidelines?search=covid")
+        .expect(200);
+      expect(res.body.guidelines).toBeInstanceOf(Array);
+      expect(res.body.guidelines).toHaveLength(1);
+      expect(res.body.guidelines[0]).toMatchObject({
+        GuidanceNumber: "NG188",
+        GuidanceSlug:
+          "covid-19-rapid-guideline-managing-the-long-term-effects-of-covid-19-ng188",
+        LongTitle:
+          "COVID-19 rapid guideline: managing the long-term effects of COVID-19 (NG188)",
+      });
+    });
+    test("Returns status 200 and single relevant guideline when used with a search param with a space in between on /api/guidelines?search=multiple+sclerosis", async () => {
+      const res = await request(app)
+        .get("/api/guidelines?search=multiple+sclerosis")
+        .expect(200);
+      expect(res.body.guidelines).toBeInstanceOf(Array);
+      expect(res.body.guidelines).toHaveLength(1);
+      expect(res.body.guidelines[0]).toMatchObject({
+        GuidanceNumber: "QS108",
+        GuidanceSlug: "multiple-sclerosis-qs108",
+        LongTitle: "Multiple sclerosis (QS108)",
+      });
+    });
+    test("Returns status 200 and multiple relevant guidelines when used with a search param on /api/guidelines?search=hypertension", async () => {
+      const res = await request(app)
+        .get("/api/guidelines?search=hypertension")
+        .expect(200);
+      expect(res.body.guidelines).toBeInstanceOf(Array);
+      expect(res.body.guidelines).toHaveLength(2);
+      expect(res.body.guidelines[0].GuidanceNumber).toBe("NG133");
+      expect(res.body.guidelines[1].GuidanceNumber).toBe("QS28");
+    });
+    test("Returns status 200 and an empty array when used with a search param with no matches on /api/guidelines?search=eczema", async () => {
+      const res = await request(app)
+        .get("/api/guidelines?search=eczema")
+        .expect(200);
+      expect(res.body.guidelines).toBeInstanceOf(Array);
+      expect(res.body.guidelines).toHaveLength(0);
+    });
   });
   describe("POST Requests", () => {
     test("POST /api/guidelines: should return 201 if POST of new Guidelines successful", async () => {
