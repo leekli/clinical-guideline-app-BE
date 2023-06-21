@@ -5,6 +5,7 @@ const guidelineSchema = require("../schemas/GuidelineSchema.js");
 const userSchema = require("../schemas/UserSchema.js");
 const usersData = require("./user-data/users");
 const branchSchema = require("../schemas/BranchSchema");
+const approvalSchema = require("../schemas/ApprovalSchema");
 const ENV = process.env.NODE_ENV || "development";
 
 require("dotenv").config({
@@ -21,7 +22,12 @@ async function seed() {
 
     const guidelinesData = await readFormatFiles();
 
-    const { guidelines, users, branches } = mongoose.connection.collections;
+    const { guidelines, users, branches, approvals } =
+      mongoose.connection.collections;
+
+    await approvals.drop(() => {});
+
+    await approvalSchema.deleteMany({});
 
     await branches.drop(() => {});
 
