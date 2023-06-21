@@ -1,9 +1,17 @@
 const branchSchema = require("../schemas/BranchSchema");
 
-exports.getAllBranches = async () => {
+exports.findAllBranches = async () => {
   return await branchSchema.find({});
 };
 
-exports.insertNewEditBranch = async (body) => {
+exports.findBranchByBranchName = async (branch_name) => {
+  const branch = await branchSchema.find({
+    branchName: branch_name,
+  });
+
+  return branch[0];
+};
+
+exports.createNewEditBranch = async (body) => {
   return await branchSchema.create(body);
 };

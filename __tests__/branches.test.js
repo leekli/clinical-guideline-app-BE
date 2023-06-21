@@ -95,8 +95,32 @@ describe("Clinical Guideline API tests for /branches", () => {
         });
       });
     });
+    test("Status 200: Should respond with a specific branch by branch_name for GET request to /api/branches/:branch_name", async () => {
+      const res = await request(app)
+        .get("/api/branches/test-edit-branch")
+        .expect(200);
+      expect(res.body.branch).toBeInstanceOf(Object);
+      expect(res.body.branch).toMatchObject({
+        _id: expect.any(String),
+        type: "edit",
+        branchName: "test-edit-branch",
+        branchSetupDateTime: expect.any(String),
+        branchOwner: "joebloggs",
+        branchAllowedUsers: [],
+        guideline: {
+          GuidanceNumber: "AB01",
+          GuidanceSlug: "test-guideline-slug",
+          GuidanceType: "Clinical guideline",
+          LongTitle: "Test guideline Long Title",
+          NHSEvidenceAccredited: false,
+          InformationStandardAccredited: false,
+          Chapters: [],
+          LastModified: "/Date(1682502323341+0100)/",
+          Uri: "http://www.test-guideline.com/a/b/s",
+          Title: "This is a short title",
+        },
+      });
+    });
   });
-  describe("PATCH Requests", () => {
-    test("Status 200: Should respond with the updated branch following a successful PATCH request to /api/branches/:branch_id", () => {});
-  });
+  describe("PATCH Requests", () => {});
 });
