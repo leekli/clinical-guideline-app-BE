@@ -3,6 +3,7 @@ const {
   findAllBranches,
   findBranchByBranchName,
   deleteOneBranchByBranchName,
+  updateBranchByBranchName,
 } = require("../models/branches.model");
 
 exports.getBranches = async (req, res, next) => {
@@ -38,6 +39,24 @@ exports.postBranch = async (req, res, next) => {
     }
 
     res.status(201).send({ branch });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.patchBranchByBranchName = async (req, res, next) => {
+  try {
+    const { branch_name } = req.params;
+    const { chapterNum, sectionNum, patchBody } = req.body;
+
+    const branch = await updateBranchByBranchName(
+      branch_name,
+      chapterNum,
+      sectionNum,
+      patchBody
+    );
+
+    res.status(200).send({ branch });
   } catch (err) {
     next(err);
   }

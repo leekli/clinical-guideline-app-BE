@@ -33,7 +33,22 @@ describe("Clinical Guideline API tests for /branches", () => {
           LongTitle: "Test guideline Long Title",
           NHSEvidenceAccredited: false,
           InformationStandardAccredited: false,
-          Chapters: [],
+          Chapters: [
+            {
+              ChapterId: "overview",
+              Title: "Overview",
+              Content:
+                '<div class="chapter" title="Overview" id="ng232_overview" xmlns="http://www.w3.org/1999/xhtml">\r\n  <h2 class="title">\r\n    <a id="overview"></a>Overview</h2>\r\n  <p>XXX.</p>\r\n  <p>See <a class="link" href="https://www.nice.org.uk/guidance/ng40" target="_top" data-original-url="https://www.nice.org.uk/guidance/ng40">XXX.</p>\r\n</div>',
+              Sections: [
+                {
+                  SectionId: "who-is-it-for",
+                  Title: "Who is it for?",
+                  Content:
+                    '<div class="section" title="Who is it for?" id="ng232_who-is-it-for" xmlns="http://www.w3.org/1999/xhtml">\r\n  <h3 class="title">\r\n    <a id="who-is-it-for"></a>Who is it for?</h3>\r\n  <div class="itemizedlist">\r\n    <ul class="itemizedlist">\r\n      <li class="listitem">\r\n        <p>Healthcare professionals</p>\r\n      </li>\r\n      <li class="listitem">\r\n        <p>People with a head injury, their families and carers</p>\r\n      </li>\r\n      <li class="listitem">\r\n        <p>Commissioners and providers</p>\r\n      </li>\r\n    </ul>\r\n  </div>\r\n</div>',
+                },
+              ],
+            },
+          ],
           LastModified: "/Date(1682502323341+0100)/",
           Uri: "http://www.test-guideline.com/a/b/s",
           Title: "This is a short title",
@@ -60,7 +75,22 @@ describe("Clinical Guideline API tests for /branches", () => {
           LongTitle: "Test guideline Long Title",
           NHSEvidenceAccredited: false,
           InformationStandardAccredited: false,
-          Chapters: [],
+          Chapters: [
+            {
+              ChapterId: "overview",
+              Title: "Overview",
+              Content:
+                '<div class="chapter" title="Overview" id="ng232_overview" xmlns="http://www.w3.org/1999/xhtml">\r\n  <h2 class="title">\r\n    <a id="overview"></a>Overview</h2>\r\n  <p>XXX.</p>\r\n  <p>See <a class="link" href="https://www.nice.org.uk/guidance/ng40" target="_top" data-original-url="https://www.nice.org.uk/guidance/ng40">XXX.</p>\r\n</div>',
+              Sections: [
+                {
+                  SectionId: "who-is-it-for",
+                  Title: "Who is it for?",
+                  Content:
+                    '<div class="section" title="Who is it for?" id="ng232_who-is-it-for" xmlns="http://www.w3.org/1999/xhtml">\r\n  <h3 class="title">\r\n    <a id="who-is-it-for"></a>Who is it for?</h3>\r\n  <div class="itemizedlist">\r\n    <ul class="itemizedlist">\r\n      <li class="listitem">\r\n        <p>Healthcare professionals</p>\r\n      </li>\r\n      <li class="listitem">\r\n        <p>People with a head injury, their families and carers</p>\r\n      </li>\r\n      <li class="listitem">\r\n        <p>Commissioners and providers</p>\r\n      </li>\r\n    </ul>\r\n  </div>\r\n</div>',
+                },
+              ],
+            },
+          ],
           LastModified: "/Date(1682502323341+0100)/",
           Uri: "http://www.test-guideline.com/a/b/s",
           Title: "This is a short title",
@@ -114,12 +144,61 @@ describe("Clinical Guideline API tests for /branches", () => {
           LongTitle: "Test guideline Long Title",
           NHSEvidenceAccredited: false,
           InformationStandardAccredited: false,
-          Chapters: [],
+          Chapters: [
+            {
+              ChapterId: "overview",
+              Title: "Overview",
+              Content:
+                '<div class="chapter" title="Overview" id="ng232_overview" xmlns="http://www.w3.org/1999/xhtml">\r\n  <h2 class="title">\r\n    <a id="overview"></a>Overview</h2>\r\n  <p>XXX.</p>\r\n  <p>See <a class="link" href="https://www.nice.org.uk/guidance/ng40" target="_top" data-original-url="https://www.nice.org.uk/guidance/ng40">XXX.</p>\r\n</div>',
+              Sections: [
+                {
+                  SectionId: "who-is-it-for",
+                  Title: "Who is it for?",
+                  Content:
+                    '<div class="section" title="Who is it for?" id="ng232_who-is-it-for" xmlns="http://www.w3.org/1999/xhtml">\r\n  <h3 class="title">\r\n    <a id="who-is-it-for"></a>Who is it for?</h3>\r\n  <div class="itemizedlist">\r\n    <ul class="itemizedlist">\r\n      <li class="listitem">\r\n        <p>Healthcare professionals</p>\r\n      </li>\r\n      <li class="listitem">\r\n        <p>People with a head injury, their families and carers</p>\r\n      </li>\r\n      <li class="listitem">\r\n        <p>Commissioners and providers</p>\r\n      </li>\r\n    </ul>\r\n  </div>\r\n</div>',
+                },
+              ],
+            },
+          ],
           LastModified: "/Date(1682502323341+0100)/",
           Uri: "http://www.test-guideline.com/a/b/s",
           Title: "This is a short title",
         },
       });
+    });
+  });
+  describe("PATCH Requests", () => {
+    test("Status 200: Should respond with updated branch information with a status 200 when a successful PATCH request is made to /api/branches/:branch_name", async () => {
+      const chapterNum = 0;
+      const sectionNum = 0;
+
+      const patchBody = {
+        SectionId: "who-is-it-for",
+        Title: "Who is it for?",
+        Content:
+          '<div class="section" title="Who is it for?" id="ng232_who-is-it-for" xmlns="http://www.w3.org/1999/xhtml">\r\n  <h3 class="title">\r\n    <a id="who-is-it-for"></a>Who is it for?</h3>\r\n  <div class="itemizedlist">\r\n    <ul class="itemizedlist">\r\n      <li class="listitem">\r\n        <p>Healthcare professionals</p>\r\n      </li>\r\n      <li class="listitem">\r\n        <p>People with a head injury, their families and carers</p>\r\n      </li>\r\n      <li class="listitem">\r\n        <p>Commissioners and providers YYY XXX ZZZ</p>\r\n      </li>\r\n    </ul>\r\n  </div>\r\n</div>',
+      };
+
+      const expected =
+        '<div class="section" title="Who is it for?" id="ng232_who-is-it-for" xmlns="http://www.w3.org/1999/xhtml">\r\n  <h3 class="title">\r\n    <a id="who-is-it-for"></a>Who is it for?</h3>\r\n  <div class="itemizedlist">\r\n    <ul class="itemizedlist">\r\n      <li class="listitem">\r\n        <p>Healthcare professionals</p>\r\n      </li>\r\n      <li class="listitem">\r\n        <p>People with a head injury, their families and carers</p>\r\n      </li>\r\n      <li class="listitem">\r\n        <p>Commissioners and providers YYY XXX ZZZ</p>\r\n      </li>\r\n    </ul>\r\n  </div>\r\n</div>';
+
+      const res = await request(app)
+        .patch("/api/branches/test-edit-branch")
+        .send({ chapterNum, sectionNum, patchBody })
+        .expect(200);
+
+      expect(
+        res.body.branch.guideline.Chapters[chapterNum].Sections[sectionNum]
+          .SectionId
+      ).toBe("who-is-it-for");
+      expect(
+        res.body.branch.guideline.Chapters[chapterNum].Sections[sectionNum]
+          .Title
+      ).toBe("Who is it for?");
+      expect(
+        res.body.branch.guideline.Chapters[chapterNum].Sections[sectionNum]
+          .Content
+      ).toEqual(expected);
     });
   });
   describe("DELETE Requests", () => {
