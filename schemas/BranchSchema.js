@@ -5,6 +5,10 @@ const branchSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  branchName: {
+    type: String,
+    required: true,
+  },
   branchSetupDateTime: {
     type: String,
     required: true,

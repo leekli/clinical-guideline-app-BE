@@ -23,6 +23,7 @@ describe("Clinical Guideline API tests for /branches", () => {
       const currentDateTime = String(Date.now());
       const branchToSetup = {
         type: "edit",
+        branchName: "test-edit-branch",
         branchSetupDateTime: currentDateTime,
         branchOwner: "joebloggs",
         guideline: {
@@ -48,6 +49,7 @@ describe("Clinical Guideline API tests for /branches", () => {
       expect(res.body.branch).toHaveProperty("_id");
       expect(res.body.branch).toMatchObject({
         type: "edit",
+        branchName: "test-edit-branch",
         branchSetupDateTime: currentDateTime,
         branchOwner: "joebloggs",
         branchAllowedUsers: [],
@@ -67,13 +69,15 @@ describe("Clinical Guideline API tests for /branches", () => {
     });
   });
   describe("GET Requests", () => {
-    test("Status 200: Should return all branches for GET request", async () => {
+    test("Status 200: Should respond with all branches for GET request to /api/branches", async () => {
       const res = await request(app).get("/api/branches").expect(200);
       expect(res.body.branches).toBeInstanceOf(Array);
       expect(res.body.branches).toHaveLength(1);
       res.body.branches.forEach((branch) => {
         expect(branch).toMatchObject({
+          _id: expect.any(String),
           type: expect.any(String),
+          branchName: expect.any(String),
           branchOwner: expect.any(String),
           branchAllowedUsers: expect.any(Array),
           guideline: {
@@ -91,5 +95,8 @@ describe("Clinical Guideline API tests for /branches", () => {
         });
       });
     });
+  });
+  describe("PATCH Requests", () => {
+    test("Status 200: Should respond with the updated branch following a successful PATCH request to /api/branches/:branch_id", () => {});
   });
 });
