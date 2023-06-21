@@ -66,4 +66,30 @@ describe("Clinical Guideline API tests for /branches", () => {
       });
     });
   });
+  describe("GET Requests", () => {
+    test("Status 200: Should return all branches for GET request", async () => {
+      const res = await request(app).get("/api/branches").expect(200);
+      expect(res.body.branches).toBeInstanceOf(Array);
+      expect(res.body.branches).toHaveLength(1);
+      res.body.branches.forEach((branch) => {
+        expect(branch).toMatchObject({
+          type: expect.any(String),
+          branchOwner: expect.any(String),
+          branchAllowedUsers: expect.any(Array),
+          guideline: {
+            GuidanceNumber: expect.any(String),
+            GuidanceSlug: expect.any(String),
+            GuidanceType: expect.any(String),
+            LongTitle: expect.any(String),
+            NHSEvidenceAccredited: expect.any(Boolean),
+            InformationStandardAccredited: expect.any(Boolean),
+            Chapters: expect.any(Array),
+            LastModified: expect.any(String),
+            Uri: expect.any(String),
+            Title: expect.any(String),
+          },
+        });
+      });
+    });
+  });
 });
