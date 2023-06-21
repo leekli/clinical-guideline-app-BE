@@ -9,10 +9,16 @@ exports.findBranchByBranchName = async (branch_name) => {
     branchName: branch_name,
   });
 
-  return branch[0];
+  return branch.length !== 0
+    ? branch[0]
+    : Promise.reject({ status: 404, msg: "Branch not found" });
 };
 
 exports.createNewEditBranch = async (body) => {
+  if (Object.keys(body).length === 0) {
+    return Promise.reject({ status: 400, msg: "Bad Request" });
+  }
+
   return await branchSchema.create(body);
 };
 
@@ -51,9 +57,11 @@ exports.updateBranchByBranchName = async (
 };
 
 exports.deleteOneBranchByBranchName = async (branch_name) => {
-  await branchSchema.find({
+  const branch = await branchSchema.find({
     branchName: branch_name,
   });
 
-  return await branchSchema.deleteOne({ branchName: branch_name });
+  return branch.length !== 0
+    ? await branchSchema.deleteOne({ branchName: branch_name })
+    : Promise.reject({ status: 404, msg: "Branch not found" });
 };

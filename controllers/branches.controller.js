@@ -34,11 +34,14 @@ exports.postBranch = async (req, res, next) => {
     const { type } = req.query;
     let branch;
 
-    if (type === "edit") {
-      branch = await createNewEditBranch(branchBody);
+    if (!type) {
+      res.status(400).send({ msg: "Bad Request: Specficy type parameter" });
     }
 
-    res.status(201).send({ branch });
+    if (type === "edit") {
+      branch = await createNewEditBranch(branchBody);
+      res.status(201).send({ branch });
+    }
   } catch (err) {
     next(err);
   }

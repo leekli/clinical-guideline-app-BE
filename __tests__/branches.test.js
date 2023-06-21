@@ -207,3 +207,147 @@ describe("Clinical Guideline API tests for /branches", () => {
     });
   });
 });
+
+describe("Error Handing", () => {
+  describe("GET Error Handling", () => {
+    test("Status 404: Invalid URL /api/branch & /api/branchz", async () => {
+      let res = await request(app).get("/api/branch").expect(404);
+      expect(res.body.msg).toBe("Invalid URL");
+      res = await request(app).get("/api/branchz").expect(404);
+      expect(res.body.msg).toBe("Invalid URL");
+    });
+    test("Status 404: Branch Name does not exist", async () => {
+      let res = await request(app).get("/api/branches/AB123-ss").expect(404);
+      expect(res.body.msg).toBe("Branch not found");
+      res = await request(app).get("/api/branches/test-branch").expect(404);
+      expect(res.body.msg).toBe("Branch not found");
+      res = await request(app).get("/api/branches/1").expect(404);
+      expect(res.body.msg).toBe("Branch not found");
+      res = await request(app).get("/api/branches/a").expect(404);
+      expect(res.body.msg).toBe("Branch not found");
+    });
+  });
+  describe("POST Error Handling", () => {
+    test("Status 400: Incorrect POST request when missing the 'type' parameter", async () => {
+      const currentDateTime = String(Date.now());
+      const branchToSetup = {
+        type: "edit",
+        branchName: "another-test-branch",
+        branchSetupDateTime: currentDateTime,
+        branchOwner: "janedoe",
+        guideline: {
+          GuidanceNumber: "ZZ99",
+          GuidanceSlug: "test-guideline-slug-2",
+          GuidanceType: "Clinical guideline",
+          LongTitle: "Test guideline Long Title 2",
+          NHSEvidenceAccredited: false,
+          InformationStandardAccredited: false,
+          Chapters: [],
+          LastModified: "/Date(1682502323341+0100)/",
+          Uri: "http://www.test-guideline.com/a/b/z",
+          Title: "This is a short title 2",
+        },
+      };
+
+      const res = await request(app)
+        .post("/api/branches")
+        .send(branchToSetup)
+        .expect(400);
+
+      expect(res.body.msg).toBe("Bad Request: Specficy type parameter");
+    });
+    test("Status 400: Malformed body - no content in the new Branch object", async () => {
+      const branchToSetup = {};
+
+      const res = await request(app)
+        .post("/api/branches?type=edit")
+        .send(branchToSetup)
+        .expect(400);
+      expect(res.body.msg).toBe("Bad Request");
+    });
+  });
+  describe("PATCH Error Handling", () => {
+    test("Status 404: Branch Name does not exist", async () => {
+      const chapterNum = 1;
+      const sectionNum = 4;
+      const patchBody = { keyName: "Test" };
+
+      const res = await request(app)
+        .patch("/api/branches/ZZ999")
+        .send({ chapterNum, sectionNum, patchBody })
+        .expect(404);
+      expect(res.body.msg).toBe("Branch not found");
+    });
+    test("Should set up a test-branch branch for the next 3 tests", async () => {
+      const currentDateTime = String(Date.now());
+      const branchToSetup = {
+        type: "edit",
+        branchName: "test-branch",
+        branchSetupDateTime: currentDateTime,
+        branchOwner: "joebloggs",
+        guideline: {
+          GuidanceNumber: "AB01",
+          GuidanceSlug: "test-guideline-slug",
+          GuidanceType: "Clinical guideline",
+          LongTitle: "Test guideline Long Title",
+          NHSEvidenceAccredited: false,
+          InformationStandardAccredited: false,
+          Chapters: [],
+          LastModified: "/Date(1682502323341+0100)/",
+          Uri: "http://www.test-guideline.com/a/b/s",
+          Title: "This is a short title",
+        },
+      };
+
+      await request(app)
+        .post("/api/branches?type=edit")
+        .send(branchToSetup)
+        .expect(201);
+    });
+    test("Status 400: Malformed body - chapterNum missing/not a number", async () => {
+      const chapterNum = null;
+      const sectionNum = 4;
+      const patchBody = { keyName: "Test" };
+
+      const res = await request(app)
+        .patch("/api/branches/test-branch")
+        .send({ chapterNum, sectionNum, patchBody })
+        .expect(400);
+      expect(res.body.msg).toBe("Bad Request");
+    });
+    test("Status 400: Malformed body - sectionNum missing/not a number", async () => {
+      const chapterNum = 0;
+      const sectionNum = null;
+      const patchBody = { keyName: "Test" };
+
+      const res = await request(app)
+        .patch("/api/branches/test-branch")
+        .send({ chapterNum, sectionNum, patchBody })
+        .expect(400);
+      expect(res.body.msg).toBe("Bad Request");
+    });
+    test("Status 400: Malformed body - nothing submitted for patchBody", async () => {
+      const chapterNum = 0;
+      const sectionNum = 1;
+      const patchBody = {};
+
+      const res = await request(app)
+        .patch("/api/branches/test-branch")
+        .send({ chapterNum, sectionNum, patchBody })
+        .expect(400);
+      expect(res.body.msg).toBe("Bad Request");
+    });
+    test("Should delete the test-branch branch for the last 3 tests ", async () => {
+      await request(app).delete("/api/branches/test-branch").expect(204);
+    });
+  });
+
+  describe("DELETE Error Handling", () => {
+    test("Status 404: Branch Name does not exist", async () => {
+      let res = await request(app).delete("/api/branches/AB123").expect(404);
+      expect(res.body.msg).toBe("Branch not found");
+      res = await request(app).delete("/api/branches/999ZZ").expect(404);
+      expect(res.body.msg).toBe("Branch not found");
+    });
+  });
+});
