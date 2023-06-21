@@ -21,3 +21,13 @@ exports.createNewEditApproval = async (body) => {
 
   return await approvalSchema.create(body);
 };
+
+exports.deleteOneApprovalByApprovalName = async (approval_name) => {
+  const approval = await approvalSchema.find({
+    approvalRequestName: approval_name,
+  });
+
+  return approval.length !== 0
+    ? await approvalSchema.deleteOne({ approvalRequestName: approval_name })
+    : Promise.reject({ status: 404, msg: "Approval Name not found" });
+};

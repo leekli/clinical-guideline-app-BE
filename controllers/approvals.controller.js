@@ -2,6 +2,7 @@ const {
   createNewEditApproval,
   findAllApprovals,
   findApprovalByApprovalName,
+  deleteOneApprovalByApprovalName,
 } = require("../models/approvals.model");
 
 exports.getAllApprovals = async (req, res, next) => {
@@ -39,6 +40,24 @@ exports.postApproval = async (req, res, next) => {
     if (type === "edit") {
       approval = await createNewEditApproval(approvalBody);
       res.status(201).send({ approval });
+    }
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.deleteApprovalByApprovalName = async (req, res, next) => {
+  try {
+    const { approval_name } = req.params;
+
+    const deletedApproval = await deleteOneApprovalByApprovalName(
+      approval_name
+    );
+
+    if (deletedApproval.deletedCount > 0) {
+      res.sendStatus(204);
+    } else {
+      next(err);
     }
   } catch (err) {
     next(err);

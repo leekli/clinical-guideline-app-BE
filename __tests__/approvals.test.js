@@ -165,6 +165,13 @@ describe("Clinical Guideline API tests for /approvals", () => {
       });
     });
   });
+  describe("DELETE Requests", () => {
+    test("Status 204: Should respond with a status 204 and no content when a approval is successfully deleted by approval_name", async () => {
+      await request(app)
+        .delete("/api/approvals/test-approval-request")
+        .expect(204);
+    });
+  });
 });
 
 describe("Error Handing", () => {
@@ -225,6 +232,14 @@ describe("Error Handing", () => {
         .send(approvalToSetup)
         .expect(400);
       expect(res.body.msg).toBe("Bad Request");
+    });
+  });
+  describe("DELETE Error Handling", () => {
+    test("Status 404: Approval Name does not exist", async () => {
+      let res = await request(app).delete("/api/approvals/AB123").expect(404);
+      expect(res.body.msg).toBe("Approval Name not found");
+      res = await request(app).delete("/api/approvals/999ZZ").expect(404);
+      expect(res.body.msg).toBe("Approval Name not found");
     });
   });
 });
