@@ -4,6 +4,7 @@ const readFormatFiles = require("./readFormatFiles");
 const guidelineSchema = require("../schemas/GuidelineSchema.js");
 const userSchema = require("../schemas/UserSchema.js");
 const usersData = require("./user-data/users");
+const branchSchema = require("../schemas/BranchSchema");
 const ENV = process.env.NODE_ENV || "development";
 
 require("dotenv").config({
@@ -20,7 +21,11 @@ async function seed() {
 
     const guidelinesData = await readFormatFiles();
 
-    const { guidelines, users } = mongoose.connection.collections;
+    const { guidelines, users, branches } = mongoose.connection.collections;
+
+    await branches.drop(() => {});
+
+    await branchSchema.deleteMany({});
 
     await guidelines.drop(() => {});
 
