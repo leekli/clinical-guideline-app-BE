@@ -15,3 +15,11 @@ exports.findBranchByBranchName = async (branch_name) => {
 exports.createNewEditBranch = async (body) => {
   return await branchSchema.create(body);
 };
+
+exports.deleteOneBranchByBranchName = async (branch_name) => {
+  await branchSchema.find({
+    branchName: branch_name,
+  });
+
+  return await branchSchema.deleteOne({ branchName: branch_name });
+};

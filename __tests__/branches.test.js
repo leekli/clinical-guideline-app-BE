@@ -122,5 +122,9 @@ describe("Clinical Guideline API tests for /branches", () => {
       });
     });
   });
-  describe("PATCH Requests", () => {});
+  describe("DELETE Requests", () => {
+    test("Status 204: Should respond with a status 204 and no content when a branch is successfully deleted by branch_name", async () => {
+      await request(app).delete("/api/branches/test-edit-branch").expect(204);
+    });
+  });
 });

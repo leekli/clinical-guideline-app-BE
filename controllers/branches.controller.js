@@ -2,6 +2,7 @@ const {
   createNewEditBranch,
   findAllBranches,
   findBranchByBranchName,
+  deleteOneBranchByBranchName,
 } = require("../models/branches.model");
 
 exports.getBranches = async (req, res, next) => {
@@ -37,6 +38,22 @@ exports.postBranch = async (req, res, next) => {
     }
 
     res.status(201).send({ branch });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.deleteBranchByBranchName = async (req, res, next) => {
+  try {
+    const { branch_name } = req.params;
+
+    const deletedBranch = await deleteOneBranchByBranchName(branch_name);
+
+    if (deletedBranch.deletedCount > 0) {
+      res.sendStatus(204);
+    } else {
+      next(err);
+    }
   } catch (err) {
     next(err);
   }
