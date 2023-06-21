@@ -97,9 +97,45 @@ describe("Clinical Guideline API tests for /approvals", () => {
       });
     });
   });
+  describe("GET Requests", () => {
+    test("Status 200: Should respond with all pending approvals for GET request to /api/approvals", async () => {
+      const res = await request(app).get("/api/approvals").expect(200);
+      expect(res.body.approvals).toBeInstanceOf(Array);
+      expect(res.body.approvals).toHaveLength(1);
+      res.body.approvals.forEach((approval) => {
+        expect(approval).toMatchObject({
+          _id: expect.any(String),
+          type: expect.any(String),
+          approvalRequestName: expect.any(String),
+          approvalSetupDateTime: expect.any(String),
+          branchOwner: expect.any(String),
+          guideline: {
+            GuidanceNumber: expect.any(String),
+            GuidanceSlug: expect.any(String),
+            GuidanceType: expect.any(String),
+            LongTitle: expect.any(String),
+            NHSEvidenceAccredited: expect.any(Boolean),
+            InformationStandardAccredited: expect.any(Boolean),
+            Chapters: expect.any(Array),
+            LastModified: expect.any(String),
+            Uri: expect.any(String),
+            Title: expect.any(String),
+          },
+        });
+      });
+    });
+  });
 });
 
 describe("Error Handing", () => {
+  describe("GET Error Handling", () => {
+    test("Status 404: Invalid URL /api/approval & /api/approvalz", async () => {
+      let res = await request(app).get("/api/approval").expect(404);
+      expect(res.body.msg).toBe("Invalid URL");
+      res = await request(app).get("/api/approvalz").expect(404);
+      expect(res.body.msg).toBe("Invalid URL");
+    });
+  });
   describe("POST Error Handling", () => {
     test("Status 400: Incorrect POST request when missing the 'type' parameter", async () => {
       const currentDateTime = String(Date.now());

@@ -1,4 +1,17 @@
-const { createNewEditApproval } = require("../models/approvals.model");
+const {
+  createNewEditApproval,
+  findAllApprovals,
+} = require("../models/approvals.model");
+
+exports.getAllApprovals = async (req, res, next) => {
+  try {
+    const approvals = await findAllApprovals();
+
+    res.status(200).send({ approvals });
+  } catch (err) {
+    next(err);
+  }
+};
 
 exports.postApproval = async (req, res, next) => {
   try {
