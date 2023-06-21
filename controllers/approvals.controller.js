@@ -1,6 +1,7 @@
 const {
   createNewEditApproval,
   findAllApprovals,
+  findApprovalByApprovalName,
 } = require("../models/approvals.model");
 
 exports.getAllApprovals = async (req, res, next) => {
@@ -8,6 +9,18 @@ exports.getAllApprovals = async (req, res, next) => {
     const approvals = await findAllApprovals();
 
     res.status(200).send({ approvals });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.getApprovalByApprovalName = async (req, res, next) => {
+  try {
+    const { approval_name } = req.params;
+
+    const approval = await findApprovalByApprovalName(approval_name);
+
+    res.status(200).send({ approval });
   } catch (err) {
     next(err);
   }

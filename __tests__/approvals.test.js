@@ -96,6 +96,46 @@ describe("Clinical Guideline API tests for /approvals", () => {
         },
       });
     });
+    test("Status 200: Should respond with a specific approval by approval_name for GET request to /api/approval/:approval_name", async () => {
+      const res = await request(app)
+        .get("/api/approvals/test-approval-request")
+        .expect(200);
+      expect(res.body.approval).toBeInstanceOf(Object);
+      expect(res.body.approval).toMatchObject({
+        _id: expect.any(String),
+        type: "edit",
+        approvalRequestName: "test-approval-request",
+        approvalSetupDateTime: expect.any(String),
+        branchOwner: "joebloggs",
+        guideline: {
+          GuidanceNumber: "AB01",
+          GuidanceSlug: "test-guideline-slug",
+          GuidanceType: "Clinical guideline",
+          LongTitle: "Test guideline Long Title",
+          NHSEvidenceAccredited: false,
+          InformationStandardAccredited: false,
+          Chapters: [
+            {
+              ChapterId: "overview",
+              Title: "Overview",
+              Content:
+                '<div class="chapter" title="Overview" id="ng232_overview" xmlns="http://www.w3.org/1999/xhtml">\r\n  <h2 class="title">\r\n    <a id="overview"></a>Overview</h2>\r\n  <p>XXX.</p>\r\n  <p>See <a class="link" href="https://www.nice.org.uk/guidance/ng40" target="_top" data-original-url="https://www.nice.org.uk/guidance/ng40">XXX.</p>\r\n</div>',
+              Sections: [
+                {
+                  SectionId: "who-is-it-for",
+                  Title: "Who is it for?",
+                  Content:
+                    '<div class="section" title="Who is it for?" id="ng232_who-is-it-for" xmlns="http://www.w3.org/1999/xhtml">\r\n  <h3 class="title">\r\n    <a id="who-is-it-for"></a>Who is it for?</h3>\r\n  <div class="itemizedlist">\r\n    <ul class="itemizedlist">\r\n      <li class="listitem">\r\n        <p>Healthcare professionals</p>\r\n      </li>\r\n      <li class="listitem">\r\n        <p>People with a head injury, their families and carers</p>\r\n      </li>\r\n      <li class="listitem">\r\n        <p>Commissioners and providers</p>\r\n      </li>\r\n    </ul>\r\n  </div>\r\n</div>',
+                },
+              ],
+            },
+          ],
+          LastModified: "/Date(1682502323341+0100)/",
+          Uri: "http://www.test-guideline.com/a/b/s",
+          Title: "This is a short title",
+        },
+      });
+    });
   });
   describe("GET Requests", () => {
     test("Status 200: Should respond with all pending approvals for GET request to /api/approvals", async () => {
@@ -134,6 +174,18 @@ describe("Error Handing", () => {
       expect(res.body.msg).toBe("Invalid URL");
       res = await request(app).get("/api/approvalz").expect(404);
       expect(res.body.msg).toBe("Invalid URL");
+    });
+    test("Status 404: Approval Name does not exist", async () => {
+      let res = await request(app)
+        .get("/api/approvals/test-approval")
+        .expect(404);
+      expect(res.body.msg).toBe("Approval Name not found");
+      res = await request(app).get("/api/approvals/approval").expect(404);
+      expect(res.body.msg).toBe("Approval Name not found");
+      res = await request(app).get("/api/approvals/aas33").expect(404);
+      expect(res.body.msg).toBe("Approval Name not found");
+      res = await request(app).get("/api/approvals/zzzz").expect(404);
+      expect(res.body.msg).toBe("Approval Name not found");
     });
   });
   describe("POST Error Handling", () => {
