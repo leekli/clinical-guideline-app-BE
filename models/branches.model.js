@@ -43,6 +43,7 @@ exports.updateBranchByBranchName = async (
   if (!branch) {
     return Promise.reject({ status: 404, msg: "Branch not found" });
   } else {
+    branch.branchLastModified = Date.now();
     branch.guideline.Chapters[chapterNum].Sections[sectionNum] = patchBody;
 
     await branchSchema.updateOne(
@@ -78,6 +79,7 @@ exports.updateOneBranchWithNewAllowedUser = async (branch_name, userToAdd) => {
     branchName: branch_name,
   });
 
+  branch.branchLastModified = Date.now();
   branch.branchAllowedUsers.push(userToAdd);
 
   await branchSchema.updateOne(

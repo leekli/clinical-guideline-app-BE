@@ -22,6 +22,9 @@ const branchSchema = new mongoose.Schema({
     default: [],
     required: true,
   },
+  branchLastModified: {
+    type: String,
+  },
   guideline: {
     type: mongoose.Schema.Types.Mixed,
     required: true,

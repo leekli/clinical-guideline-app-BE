@@ -599,6 +599,34 @@ describe("/api/branches Test Requests", () => {
           .Content
       ).toEqual(expected);
     });
+    test("Status 200: Should update the branchLastModified property with the latest date once a successful PATCH request on /api/branches/:branch_name is complete", async () => {
+      const chapterNum = 0;
+      const sectionNum = 0;
+
+      const patchBody = {
+        SectionId: "who-is-it-for",
+        Title: "Who is it for?",
+        Content:
+          '<div class="section" title="Who is it for?" id="ng232_who-is-it-for" xmlns="http://www.w3.org/1999/xhtml">\r\n  <h3 class="title">\r\n    <a id="who-is-it-for"></a>I AM ANOTHER EDIT Who is it for?</h3>\r\n  <div class="itemizedlist">\r\n    <ul class="itemizedlist">\r\n      <li class="listitem">\r\n        <p>Healthcare professionals</p>\r\n      </li>\r\n      <li class="listitem">\r\n        <p>People with a head injury, their families and carers</p>\r\n      </li>\r\n      <li class="listitem">\r\n        <p>Commissioners and providers YYY XXX ZZZ</p>\r\n      </li>\r\n    </ul>\r\n  </div>\r\n</div>',
+      };
+
+      const res = await request(app)
+        .patch("/api/branches/test-edit-branch")
+        .send({ chapterNum, sectionNum, patchBody })
+        .expect(200);
+
+      const currentYear = String(new Date().getFullYear());
+      const currentHour = String(new Date().getHours());
+
+      expect(typeof res.body.branch.branchLastModified).toBe("string");
+      expect(/^\d+$/.test(res.body.branch.branchLastModified)).toBe(true);
+      expect(
+        String(new Date(Number(res.body.branch.branchLastModified)))
+      ).toContain(currentYear);
+      expect(
+        String(new Date(Number(res.body.branch.branchLastModified)))
+      ).toContain(currentHour);
+    });
     test("Status 200: Should respond with the updated branch when a new user is added to the branchAllowedUsers array on /api/branches/:branch_name/addusers", async () => {
       const userToAdd = "janedoe";
 
@@ -609,6 +637,26 @@ describe("/api/branches Test Requests", () => {
 
       expect(res.body.branch.branchOwner).toBe("joebloggs");
       expect(res.body.branch.branchAllowedUsers).toEqual(["janedoe"]);
+    });
+    test("Status 200: Should update the branchLastModified property with the latest date once a successful PATCH request on /api/branches/:branch_name/addusers is complete", async () => {
+      const userToAdd = "bosnow";
+
+      const res = await request(app)
+        .patch("/api/branches/test-edit-branch/addusers")
+        .send({ userToAdd })
+        .expect(200);
+
+      const currentYear = String(new Date().getFullYear());
+      const currentHour = String(new Date().getHours());
+
+      expect(typeof res.body.branch.branchLastModified).toBe("string");
+      expect(/^\d+$/.test(res.body.branch.branchLastModified)).toBe(true);
+      expect(
+        String(new Date(Number(res.body.branch.branchLastModified)))
+      ).toContain(currentYear);
+      expect(
+        String(new Date(Number(res.body.branch.branchLastModified)))
+      ).toContain(currentHour);
     });
   });
   describe("/api/branches DELETE Requests", () => {
