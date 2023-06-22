@@ -91,3 +91,37 @@ exports.updateOneBranchWithNewAllowedUser = async (branch_name, userToAdd) => {
 
   return branch;
 };
+
+exports.updateOneBranchToLocked = async (branch_name) => {
+  const branch = await branchSchema.findOne({
+    branchName: branch_name,
+  });
+
+  branch.branchLockedForApproval = true;
+
+  await branchSchema.updateOne(
+    {
+      branchName: branch_name,
+    },
+    branch
+  );
+
+  return branch;
+};
+
+exports.updateOneBranchToUnLocked = async (branch_name) => {
+  const branch = await branchSchema.findOne({
+    branchName: branch_name,
+  });
+
+  branch.branchLockedForApproval = false;
+
+  await branchSchema.updateOne(
+    {
+      branchName: branch_name,
+    },
+    branch
+  );
+
+  return branch;
+};

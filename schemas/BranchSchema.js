@@ -25,6 +25,10 @@ const branchSchema = new mongoose.Schema({
   branchLastModified: {
     type: String,
   },
+  branchLockedForApproval: {
+    type: Boolean,
+    default: false,
+  },
   guideline: {
     type: mongoose.Schema.Types.Mixed,
     required: true,

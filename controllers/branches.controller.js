@@ -5,6 +5,8 @@ const {
   deleteOneBranchByBranchName,
   updateBranchByBranchName,
   updateOneBranchWithNewAllowedUser,
+  updateOneBranchToLocked,
+  updateOneBranchToUnLocked,
 } = require("../models/branches.model");
 
 exports.getBranches = async (req, res, next) => {
@@ -91,6 +93,30 @@ exports.patchBranchWithNewAllowedUsers = async (req, res, next) => {
       branch_name,
       userToAdd
     );
+
+    res.status(200).send({ branch });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.patchBranchToLockedOnApprovalSubmission = async (req, res, next) => {
+  try {
+    const { branch_name } = req.params;
+
+    const branch = await updateOneBranchToLocked(branch_name);
+
+    res.status(200).send({ branch });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.patchBranchToUnlockedOnApprovalDenial = async (req, res, next) => {
+  try {
+    const { branch_name } = req.params;
+
+    const branch = await updateOneBranchToUnLocked(branch_name);
 
     res.status(200).send({ branch });
   } catch (err) {

@@ -424,6 +424,7 @@ describe("/api/branches Test Requests", () => {
         branchSetupDateTime: currentDateTime,
         branchOwner: "joebloggs",
         branchAllowedUsers: [],
+        branchLockedForApproval: false,
         guideline: {
           GuidanceNumber: "AB01",
           GuidanceSlug: "test-guideline-slug",
@@ -466,6 +467,7 @@ describe("/api/branches Test Requests", () => {
           branchName: expect.any(String),
           branchOwner: expect.any(String),
           branchAllowedUsers: expect.any(Array),
+          branchLockedForApproval: expect.any(Boolean),
           guideline: {
             GuidanceNumber: expect.any(String),
             GuidanceSlug: expect.any(String),
@@ -493,6 +495,7 @@ describe("/api/branches Test Requests", () => {
         branchSetupDateTime: expect.any(String),
         branchOwner: "joebloggs",
         branchAllowedUsers: [],
+        branchLockedForApproval: false,
         guideline: {
           GuidanceNumber: "AB01",
           GuidanceSlug: "test-guideline-slug",
@@ -614,6 +617,20 @@ describe("/api/branches Test Requests", () => {
       expect(
         String(new Date(Number(res.body.branch.branchLastModified)))
       ).toContain(currentHour);
+    });
+    test("Status 200: Should update the branchLockedForApproval to true (locked) when the endpoint is invoked", async () => {
+      const res = await request(app)
+        .patch("/api/branches/test-edit-branch/lockbranch")
+        .expect(200);
+
+      expect(res.body.branch.branchLockedForApproval).toBe(true);
+    });
+    test("Status 200: Should update the branchLockedForApproval to false (un-locked) when the endpoint is invoked", async () => {
+      const res = await request(app)
+        .patch("/api/branches/test-edit-branch/unlockbranch")
+        .expect(200);
+
+      expect(res.body.branch.branchLockedForApproval).toBe(false);
     });
   });
   describe("/api/branches DELETE Requests", () => {

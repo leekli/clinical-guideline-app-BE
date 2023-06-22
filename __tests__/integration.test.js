@@ -28,6 +28,7 @@ afterAll(async () => {
     --> PATCH that branch - user clicks edit a section
     --> PATCH that branch with a new user - user clicks add a new approved user
     --> POST it to /approvals (using final PATCH from last request) - user clicks send for approval
+    --> PATCH [LOCK] the branch which has been submitted for approval
     --> GET approvals check the new approval is in the list they're there - user clicks all approvals
     --> GET approval by approval name - check its there and brings everything up - user clicks specific approval name
     --> simulate if approved:
@@ -321,7 +322,7 @@ describe("Full Integration test", () => {
       String(new Date(Number(patchBranchBody.branchLastModified)))
     ).toContain(currentHour);
 
-    // 7. PATCH specific branch and add a new user to the approved list who can edit this branch (PATCH /api/branches/:branch_name)
+    // 7. PATCH specific branch and add a new user to the approved list who can edit this branch (PATCH /api/branches/:branch_name/adduser)
     const userToAdd = "janedoe";
 
     const patchBranchBodyUserAddedResponse = await request(app)
@@ -372,7 +373,14 @@ describe("Full Integration test", () => {
       guideline: patchBranchBodyUserAddedResponse.body.branch.guideline,
     });
 
-    // 9. GET all Approvals and ensure new approval is there (GET /api/approvals)
+    // 9. Lock the current branch while it's pending approval to stop any further branch edits (PATCH /api/branches/:branch_name/lockbranch)
+    const patchBranchToLocked = await request(app)
+      .patch("/api/branches/cg104-chapter-0-edits/lockbranch")
+      .expect(200);
+
+    expect(patchBranchToLocked.body.branch.branchLockedForApproval).toBe(true);
+
+    // 10. GET all Approvals and ensure new approval is there (GET /api/approvals)
     const allApprovalsResponse = await request(app)
       .get("/api/approvals")
       .expect(200);
@@ -385,7 +393,7 @@ describe("Full Integration test", () => {
       "cg104-chapter-0-approval-request"
     );
 
-    // 10. GET Single Approval, new one created (GET /api/approval/:approval_name)
+    // 11. GET Single Approval, new one created (GET /api/approval/:approval_name)
     const singleApprovalResponse = await request(app)
       .get("/api/approvals/cg104-chapter-0-approval-request")
       .expect(200);
@@ -402,7 +410,17 @@ describe("Full Integration test", () => {
       guideline: patchBranchBodyUserAddedResponse.body.branch.guideline,
     });
 
-    // 11. Now, assume the Approval request is approved, first PATCH this finalised edited guideline to the main Guidelines endpoint (PATCH /guidelines/:guideline_id)
+    // 12. Assume the Approval is DENIED, first the approval would be deleted (test is below), and unlocks the branch for further edits
+    // --> would have a test here to delete the approval but done below and test proved so skipping it
+    const patchBranchToUnlocked = await request(app)
+      .patch("/api/branches/cg104-chapter-0-edits/unlockbranch")
+      .expect(200);
+
+    expect(patchBranchToUnlocked.body.branch.branchLockedForApproval).toBe(
+      false
+    );
+
+    // 13. Now, assume the Approval request is APPROVED, first PATCH this finalised edited guideline to the main Guidelines endpoint (PATCH /guidelines/:guideline_id)
     const patchedGuideline = structuredClone(
       patchBranchBodyUserAddedResponse.body.branch.guideline
     );
@@ -424,12 +442,12 @@ describe("Full Integration test", () => {
       patchGuidelineInfo.Chapters[chapterNum].Sections[sectionNum].Content
     ).toEqual(expected);
 
-    // 12. Now delete the relevant branch as approval is successful
+    // 14. Now delete the relevant branch as approval is successful
     await request(app)
       .delete("/api/branches/cg104-chapter-0-edits")
       .expect(204);
 
-    // 13. Now delete the approval as approval is successful and previous 2 requests were successful
+    // 15. Now delete the approval as approval is successful and previous 2 requests were successful
     await request(app)
       .delete("/api/approvals/cg104-chapter-0-approval-request")
       .expect(204);
