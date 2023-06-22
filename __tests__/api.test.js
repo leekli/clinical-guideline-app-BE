@@ -599,6 +599,17 @@ describe("/api/branches Test Requests", () => {
           .Content
       ).toEqual(expected);
     });
+    test("Status 200: Should respond with the updated branch when a new user is added to the branchAllowedUsers array on /api/branches/:branch_name/addusers", async () => {
+      const userToAdd = "janedoe";
+
+      const res = await request(app)
+        .patch("/api/branches/test-edit-branch/addusers")
+        .send({ userToAdd })
+        .expect(200);
+
+      expect(res.body.branch.branchOwner).toBe("joebloggs");
+      expect(res.body.branch.branchAllowedUsers).toEqual(["janedoe"]);
+    });
   });
   describe("/api/branches DELETE Requests", () => {
     test("Status 204: Should respond with a status 204 and no content when a branch is successfully deleted by branch_name", async () => {
@@ -675,7 +686,7 @@ describe("/api/branches Test Requests", () => {
           .expect(404);
         expect(res.body.msg).toBe("Branch not found");
       });
-      test("Should set up a test-branch branch for the next 3 tests", async () => {
+      test("Should set up a test-branch branch for the next 4 tests", async () => {
         const currentDateTime = String(Date.now());
         const branchToSetup = {
           type: "edit",
@@ -734,7 +745,27 @@ describe("/api/branches Test Requests", () => {
           .expect(400);
         expect(res.body.msg).toBe("Bad Request");
       });
-      test("Should delete the test-branch branch for the last 3 tests ", async () => {
+      test("Status 400: Bad Request, malformed body - reponds with error when trying to add a new approved user to a branch when the user provided is empty", async () => {
+        const userToAdd = "";
+
+        const res = await request(app)
+          .patch("/api/branches/test-branch/addusers")
+          .send({ userToAdd })
+          .expect(400);
+
+        expect(res.body.msg).toBe("Bad Request: No user provided");
+      });
+      test("Status 400: Bad Request, malformed body - reponds with error when trying to add a new approved user to a branch when the user provided is missing", async () => {
+        let userToAdd;
+
+        const res = await request(app)
+          .patch("/api/branches/test-branch/addusers")
+          .send({ userToAdd })
+          .expect(400);
+
+        expect(res.body.msg).toBe("Bad Request: No user provided");
+      });
+      test("Should delete the test-branch branch for the last 4 tests ", async () => {
         await request(app).delete("/api/branches/test-branch").expect(204);
       });
     });

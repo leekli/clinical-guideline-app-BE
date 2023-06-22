@@ -4,6 +4,7 @@ const {
   findBranchByBranchName,
   deleteOneBranchByBranchName,
   updateBranchByBranchName,
+  updateOneBranchWithNewAllowedUser,
 } = require("../models/branches.model");
 
 exports.getBranches = async (req, res, next) => {
@@ -76,6 +77,22 @@ exports.deleteBranchByBranchName = async (req, res, next) => {
     } else {
       next(err);
     }
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.patchBranchWithNewAllowedUsers = async (req, res, next) => {
+  try {
+    const { userToAdd } = req.body;
+    const { branch_name } = req.params;
+
+    const branch = await updateOneBranchWithNewAllowedUser(
+      branch_name,
+      userToAdd
+    );
+
+    res.status(200).send({ branch });
   } catch (err) {
     next(err);
   }

@@ -65,3 +65,27 @@ exports.deleteOneBranchByBranchName = async (branch_name) => {
     ? await branchSchema.deleteOne({ branchName: branch_name })
     : Promise.reject({ status: 404, msg: "Branch not found" });
 };
+
+exports.updateOneBranchWithNewAllowedUser = async (branch_name, userToAdd) => {
+  if (!userToAdd || userToAdd.length === 0) {
+    return Promise.reject({
+      status: 400,
+      msg: "Bad Request: No user provided",
+    });
+  }
+
+  const branch = await branchSchema.findOne({
+    branchName: branch_name,
+  });
+
+  branch.branchAllowedUsers.push(userToAdd);
+
+  await branchSchema.updateOne(
+    {
+      branchName: branch_name,
+    },
+    branch
+  );
+
+  return branch;
+};
