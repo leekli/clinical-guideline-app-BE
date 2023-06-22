@@ -42,19 +42,12 @@ exports.insertNewGuideline = async (postBody) => {
   return await guidelineSchema.create(postBody);
 };
 
-exports.updateGuidelineByNumber = async (
-  guideline_id,
-  chapterNum,
-  sectionNum,
-  patchBody
-) => {
-  if (Object.keys(patchBody).length === 0) {
+exports.updateGuidelineByNumber = async (guideline_id, patchedGuideline) => {
+  if (Object.keys(patchedGuideline).length === 0) {
     return Promise.reject({ status: 400, msg: "Bad Request" });
   }
 
-  if (typeof chapterNum !== "number" || typeof sectionNum !== "number") {
-    return Promise.reject({ status: 400, msg: "Bad Request" });
-  }
+  const copiedGuideline = structuredClone(patchedGuideline);
 
   const guideline = await guidelineSchema.findOne({
     GuidanceNumber: guideline_id,
@@ -63,15 +56,13 @@ exports.updateGuidelineByNumber = async (
   if (!guideline) {
     return Promise.reject({ status: 404, msg: "Guideline not found" });
   } else {
-    guideline.Chapters[chapterNum].Sections[sectionNum] = patchBody;
-
     await guidelineSchema.updateOne(
       {
         GuidanceNumber: guideline_id,
       },
-      guideline
+      copiedGuideline
     );
 
-    return guideline;
+    return copiedGuideline;
   }
 };

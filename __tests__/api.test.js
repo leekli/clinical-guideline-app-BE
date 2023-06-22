@@ -2,6 +2,7 @@ const request = require("supertest");
 const app = require("../app");
 const mongoose = require("mongoose");
 const seed = require("../data/seed");
+const fs = require("fs/promises");
 
 beforeAll(async () => {
   await seed();
@@ -191,20 +192,31 @@ describe("/api/guidelines Test Requests", () => {
       const chapterNum = 0;
       const sectionNum = 1;
 
+      const testGuidelineReadFile = await fs.readFile(
+        `${__dirname}/../data/guideline-data/02.json`,
+        "utf-8"
+      );
+
+      const testGuidelineJSON = JSON.parse(testGuidelineReadFile);
+
       const patchBody = {
         SectionId:
           "12-aspirin-for-primary-prevention-of-cardiovascular-disease",
         Title: "1.2 Aspirin for primary prevention of cardiovascular disease",
         Content:
-          '<div class="section" title="1.2 Aspirin for primary prevention of cardiovascular disease" id="cg181_1.2-aspirin-for-primary-prevention-of-cardiovascular-disease" xmlns="http://www.w3.org/1999/xhtml">\r\n  <h3 class="title">\r\n    <a id="aspirin-for-primary-prevention-of-cardiovascular-disease"></a>1.2 Aspirin for primary prevention of cardiovascular disease</h3>\r\n  <div id="cg181_1_2_1" class="recommendation_text">\r\n    <p class="numbered-paragraph">\r\n      <span class="paragraph-number">1.2.1 </span>AMEND Do not routinely offer aspirin for primary prevention of CVD. <strong>[2023]</strong></p>\r\n    <p>AMEND For guidance on using aspirin to prevent venous thromboembolism in over 16s in hospital, see <a class="link" href="https://www.nice.org.uk/guidance/ng89" target="_top" data-original-url="https://www.nice.org.uk/guidance/ng89">NICE\'s guideline on venous thromboembolism in over 16s: reducing the risk of hospital-acquired deep vein thrombosis or pulmonary embolism</a>.</p>\r\n    <div class="panel">\r\n      <p>AMEND NICE\'s surveillance team reviewed the evidence about aspirin for the primary prevention of CVD. Based on the review, NICE decided to add a do not routinely offer recommendation about this. For full details see the <a class="link" href="https://www.nice.org.uk/guidance/cg181/resources/2023-exceptional-surveillance-of-cardiovascular-disease-risk-assessment-and-reduction-including-lipid-modification-nice-guideline-cg181-11322671149/chapter/Surveillance-decision?tab=evidence" target="_top">January 2023 exceptional surveillance report</a>. </p>\r\n    </div>\r\n  </div>\r\n</div>',
+          '<div class="section" title="1.2 Aspirin for primary prevention of cardiovascular disease" id="cg181_1.2-aspirin-for-primary-prevention-of-cardiovascular-disease" xmlns="http://www.w3.org/1999/xhtml">\r\n  <h3 class="title">\r\n    <a id="aspirin-for-primary-prevention-of-cardiovascular-disease"></a>1.2 Aspirin for primary prevention of cardiovascular disease</h3>\r\n  <div id="cg181_1_2_1" class="recommendation_text">\r\n    <p class="numbered-paragraph">\r\n      <span class="paragraph-number">1.2.1 </span>AMEND Do not routinely offer aspirin for primary prevention of CVD. <strong>[2023]</strong></p>\r\n    <p>THIS IS A FULLY AMENDED SECTION, see <a class="link" href="https://www.nice.org.uk/guidance/ng89" target="_top" data-original-url="https://www.nice.org.uk/guidance/ng89">NICE\'s guideline on venous thromboembolism in over 16s: reducing the risk of hospital-acquired deep vein thrombosis or pulmonary embolism</a>.</p>\r\n    <div class="panel">\r\n      <p>ONE MORE EDIT <a class="link" href="https://www.nice.org.uk/guidance/cg181/resources/2023-exceptional-surveillance-of-cardiovascular-disease-risk-assessment-and-reduction-including-lipid-modification-nice-guideline-cg181-11322671149/chapter/Surveillance-decision?tab=evidence" target="_top">January 2023 exceptional surveillance report</a>. </p>\r\n    </div>\r\n  </div>\r\n</div>',
       };
 
+      testGuidelineJSON.Chapters[chapterNum].Sections[sectionNum] = patchBody;
+
+      const patchedGuideline = testGuidelineJSON;
+
       const expected =
-        '<div class="section" title="1.2 Aspirin for primary prevention of cardiovascular disease" id="cg181_1.2-aspirin-for-primary-prevention-of-cardiovascular-disease" xmlns="http://www.w3.org/1999/xhtml">\r\n  <h3 class="title">\r\n    <a id="aspirin-for-primary-prevention-of-cardiovascular-disease"></a>1.2 Aspirin for primary prevention of cardiovascular disease</h3>\r\n  <div id="cg181_1_2_1" class="recommendation_text">\r\n    <p class="numbered-paragraph">\r\n      <span class="paragraph-number">1.2.1 </span>AMEND Do not routinely offer aspirin for primary prevention of CVD. <strong>[2023]</strong></p>\r\n    <p>AMEND For guidance on using aspirin to prevent venous thromboembolism in over 16s in hospital, see <a class="link" href="https://www.nice.org.uk/guidance/ng89" target="_top" data-original-url="https://www.nice.org.uk/guidance/ng89">NICE\'s guideline on venous thromboembolism in over 16s: reducing the risk of hospital-acquired deep vein thrombosis or pulmonary embolism</a>.</p>\r\n    <div class="panel">\r\n      <p>AMEND NICE\'s surveillance team reviewed the evidence about aspirin for the primary prevention of CVD. Based on the review, NICE decided to add a do not routinely offer recommendation about this. For full details see the <a class="link" href="https://www.nice.org.uk/guidance/cg181/resources/2023-exceptional-surveillance-of-cardiovascular-disease-risk-assessment-and-reduction-including-lipid-modification-nice-guideline-cg181-11322671149/chapter/Surveillance-decision?tab=evidence" target="_top">January 2023 exceptional surveillance report</a>. </p>\r\n    </div>\r\n  </div>\r\n</div>';
+        '<div class="section" title="1.2 Aspirin for primary prevention of cardiovascular disease" id="cg181_1.2-aspirin-for-primary-prevention-of-cardiovascular-disease" xmlns="http://www.w3.org/1999/xhtml">\r\n  <h3 class="title">\r\n    <a id="aspirin-for-primary-prevention-of-cardiovascular-disease"></a>1.2 Aspirin for primary prevention of cardiovascular disease</h3>\r\n  <div id="cg181_1_2_1" class="recommendation_text">\r\n    <p class="numbered-paragraph">\r\n      <span class="paragraph-number">1.2.1 </span>AMEND Do not routinely offer aspirin for primary prevention of CVD. <strong>[2023]</strong></p>\r\n    <p>THIS IS A FULLY AMENDED SECTION, see <a class="link" href="https://www.nice.org.uk/guidance/ng89" target="_top" data-original-url="https://www.nice.org.uk/guidance/ng89">NICE\'s guideline on venous thromboembolism in over 16s: reducing the risk of hospital-acquired deep vein thrombosis or pulmonary embolism</a>.</p>\r\n    <div class="panel">\r\n      <p>ONE MORE EDIT <a class="link" href="https://www.nice.org.uk/guidance/cg181/resources/2023-exceptional-surveillance-of-cardiovascular-disease-risk-assessment-and-reduction-including-lipid-modification-nice-guideline-cg181-11322671149/chapter/Surveillance-decision?tab=evidence" target="_top">January 2023 exceptional surveillance report</a>. </p>\r\n    </div>\r\n  </div>\r\n</div>';
 
       const res = await request(app)
         .patch("/api/guidelines/CG181")
-        .send({ chapterNum, sectionNum, patchBody })
+        .send({ patchedGuideline })
         .expect(200);
 
       expect(
@@ -217,35 +229,6 @@ describe("/api/guidelines Test Requests", () => {
         res.body.guideline.Chapters[chapterNum].Sections[sectionNum].Content
       ).toEqual(expected);
     });
-  });
-  test("PATCH /api/guidelines/:guideline_id: should return 200 if PATCH successful", async () => {
-    const chapterNum = 3;
-    const sectionNum = 1;
-
-    const patchBody = {
-      SectionId: "chronic-pancreatitis",
-      Title: "Chronic pancreatitis",
-      Content:
-        '<div class="section" title="Chronic pancreatitis" id="ng104_chronic-pancreatitis" xmlns="http://www.w3.org/1999/xhtml">\r\n  <h3 class="title">\r\n    <a id="chronic-pancreatitis-2"></a>Chronic pancreatitis</h3>\r\n  <p>AMENDMENT Chronic pancreatitis is a continuous prolonged inflammatory process of the pancreas that results in fibrosis, cyst formation and stricturing of the pancreatic duct. It usually presents with chronic abdominal pain but it can sometimes be painless. The clinical course is variable but most people with chronic pancreatitis have had 1 or more attacks of acute pancreatitis that has resulted in inflammatory change and fibrosis. In some people, however, chronic pancreatitis has a more insidious onset. The intensity of pain can range from mild to severe, even in people with little evidence of pancreatic disease on imaging.</p>\r\n  <p>The annual incidence of chronic pancreatitis in western Europe is about 5 new cases per 100,000 people, although this is probably an underestimate. The male to female ratio is 7:1 and the average age of onset is between 36 and 55 years. Alcohol is responsible for 70-80% of cases of chronic pancreatitis. Although cigarette smoking is not thought to be a primary cause in itself, it is strongly associated with chronic pancreatitis and is thought to exacerbate the condition. Chronic pancreatitis may be idiopathic or, in about 5% of cases, caused by hereditary factors (in these cases there is usually a positive family history). Other causes include hypercalcaemia, hyperlipidaemia or autoimmune disease. </p>\r\n  <p>Chronic pancreatitis causes a significant reduction in pancreatic function and the majority of people have reduced exocrine (digestive) function and reduced endocrine function (diabetes). They usually need expert dietary advice and medication. Chronic pancreatitis can also give rise to specific complications including painful inflammatory mass and obstructed pancreatic duct, biliary or duodenal obstruction, haemorrhage, or accumulation of fluid in the abdomen (ascites) or chest (pleural effusion). Managing these complications may be difficult because of ongoing comorbidities and social problems such as alcohol or opiate dependence. Chronic pancreatitis significantly increases the risk of pancreatic cancer. This risk is much higher in people with hereditary pancreatitis. AMENDMENT</p>\r\n</div>',
-    };
-
-    const expected =
-      '<div class="section" title="Chronic pancreatitis" id="ng104_chronic-pancreatitis" xmlns="http://www.w3.org/1999/xhtml">\r\n  <h3 class="title">\r\n    <a id="chronic-pancreatitis-2"></a>Chronic pancreatitis</h3>\r\n  <p>AMENDMENT Chronic pancreatitis is a continuous prolonged inflammatory process of the pancreas that results in fibrosis, cyst formation and stricturing of the pancreatic duct. It usually presents with chronic abdominal pain but it can sometimes be painless. The clinical course is variable but most people with chronic pancreatitis have had 1 or more attacks of acute pancreatitis that has resulted in inflammatory change and fibrosis. In some people, however, chronic pancreatitis has a more insidious onset. The intensity of pain can range from mild to severe, even in people with little evidence of pancreatic disease on imaging.</p>\r\n  <p>The annual incidence of chronic pancreatitis in western Europe is about 5 new cases per 100,000 people, although this is probably an underestimate. The male to female ratio is 7:1 and the average age of onset is between 36 and 55 years. Alcohol is responsible for 70-80% of cases of chronic pancreatitis. Although cigarette smoking is not thought to be a primary cause in itself, it is strongly associated with chronic pancreatitis and is thought to exacerbate the condition. Chronic pancreatitis may be idiopathic or, in about 5% of cases, caused by hereditary factors (in these cases there is usually a positive family history). Other causes include hypercalcaemia, hyperlipidaemia or autoimmune disease. </p>\r\n  <p>Chronic pancreatitis causes a significant reduction in pancreatic function and the majority of people have reduced exocrine (digestive) function and reduced endocrine function (diabetes). They usually need expert dietary advice and medication. Chronic pancreatitis can also give rise to specific complications including painful inflammatory mass and obstructed pancreatic duct, biliary or duodenal obstruction, haemorrhage, or accumulation of fluid in the abdomen (ascites) or chest (pleural effusion). Managing these complications may be difficult because of ongoing comorbidities and social problems such as alcohol or opiate dependence. Chronic pancreatitis significantly increases the risk of pancreatic cancer. This risk is much higher in people with hereditary pancreatitis. AMENDMENT</p>\r\n</div>';
-
-    const res = await request(app)
-      .patch("/api/guidelines/NG104")
-      .send({ chapterNum, sectionNum, patchBody })
-      .expect(200);
-
-    expect(
-      res.body.guideline.Chapters[chapterNum].Sections[sectionNum].SectionId
-    ).toBe("chronic-pancreatitis");
-    expect(
-      res.body.guideline.Chapters[chapterNum].Sections[sectionNum].Title
-    ).toBe("Chronic pancreatitis");
-    expect(
-      res.body.guideline.Chapters[chapterNum].Sections[sectionNum].Content
-    ).toEqual(expected);
   });
   describe("/api/guidelines DELETE Requests", () => {
     test("DELETE /api/guidelines/:guideline_id: should return 204 if delete successful", async () => {
@@ -289,46 +272,20 @@ describe("/api/guidelines Test Requests", () => {
     });
     describe("/api/guidelines PATCH Error Handling", () => {
       test("Status 404: Guideline ID/Number does not exist", async () => {
-        const chapterNum = 1;
-        const sectionNum = 4;
-        const patchBody = { keyName: "Test" };
+        const patchedGuideline = { keyName: "Test" };
 
         const res = await request(app)
           .patch("/api/guidelines/ZZ999")
-          .send({ chapterNum, sectionNum, patchBody })
+          .send({ patchedGuideline })
           .expect(404);
         expect(res.body.msg).toBe("Guideline not found");
       });
-      test("Status 400: Malformed body - chapterNum missing/not a number", async () => {
-        const chapterNum = null;
-        const sectionNum = 4;
-        const patchBody = { keyName: "Test" };
-
-        const res = await request(app)
-          .patch("/api/guidelines/NG133")
-          .send({ chapterNum, sectionNum, patchBody })
-          .expect(400);
-        expect(res.body.msg).toBe("Bad Request");
-      });
-      test("Status 400: Malformed body - sectionNum missing/not a number", async () => {
-        const chapterNum = 0;
-        const sectionNum = null;
-        const patchBody = { keyName: "Test" };
-
-        const res = await request(app)
-          .patch("/api/guidelines/NG133")
-          .send({ chapterNum, sectionNum, patchBody })
-          .expect(400);
-        expect(res.body.msg).toBe("Bad Request");
-      });
       test("Status 400: Malformed body - nothing submitted for patchBody", async () => {
-        const chapterNum = 0;
-        const sectionNum = 1;
-        const patchBody = {};
+        const patchedGuideline = {};
 
         const res = await request(app)
           .patch("/api/guidelines/NG133")
-          .send({ chapterNum, sectionNum, patchBody })
+          .send({ patchedGuideline })
           .expect(400);
         expect(res.body.msg).toBe("Bad Request");
       });

@@ -15,7 +15,15 @@ const app = express();
 
 // Middleware
 app.use(cors());
-app.use(express.json());
+app.use(
+  express.json({
+    verify: (req, res, buf) => {
+      req.rawBody = buf.toString();
+    },
+    limit: "50mb",
+  })
+);
+app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 
 // Routes
 app.use("/api", apiRouter);

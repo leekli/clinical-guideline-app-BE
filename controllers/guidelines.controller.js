@@ -57,13 +57,11 @@ exports.deleteGuidelineById = async (req, res, next) => {
 exports.patchGuidelineById = async (req, res, next) => {
   try {
     const { guideline_id } = req.params;
-    const { chapterNum, sectionNum, patchBody } = req.body;
+    const { patchedGuideline } = req.body;
 
     const guideline = await updateGuidelineByNumber(
       guideline_id,
-      chapterNum,
-      sectionNum,
-      patchBody
+      patchedGuideline
     );
 
     res.status(200).send({ guideline });
