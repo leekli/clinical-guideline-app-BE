@@ -17,7 +17,7 @@ afterAll(async () => {
   await mongoose.connection.close();
 });
 
-describe("/api Requests", () => {
+describe("/api Tests Requests", () => {
   describe("/api GET Requests", () => {
     test("GET /api: should return 200 and msg", async () => {
       const res = await request(app).get("/api").expect(200);
