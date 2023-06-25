@@ -1,5 +1,20 @@
 const mongoose = require("mongoose");
 
+const commentsSchema = mongoose.Schema({
+  author: {
+    type: String,
+    required: true,
+  },
+  body: {
+    type: String,
+    required: true,
+  },
+  commentDate: {
+    type: Date,
+    default: Date.now,
+  },
+});
+
 const branchSchema = new mongoose.Schema({
   type: {
     type: String,
@@ -33,6 +48,7 @@ const branchSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.Mixed,
     required: true,
   },
+  comments: [commentsSchema],
 });
 
 module.exports = mongoose.model("Branch", branchSchema);

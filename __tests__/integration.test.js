@@ -19,7 +19,7 @@ afterAll(async () => {
   await mongoose.connection.close();
 });
 
-/* Full integration test plan:
+/* 🧪 Full integration test plan:
     --> Seed everything
     --> GET all guidelines (check they're all there) - users clicks all guidelines
     --> GET a single guideline (save to variable) - user clicks specific guideline
@@ -27,11 +27,15 @@ afterAll(async () => {
     --> GET branch by ID check it's there - user clicks branches button
     --> PATCH that branch - user clicks edit a section
     --> PATCH that branch with a new user - user clicks add a new approved user
+    --> POST comments to the branches comment section and check they're there
     --> POST it to /approvals (using final PATCH from last request) - user clicks send for approval
     --> PATCH [LOCK] the branch which has been submitted for approval
     --> GET approvals check the new approval is in the list they're there - user clicks all approvals
     --> GET approval by approval name - check its there and brings everything up - user clicks specific approval name
-    --> simulate if approved:
+    --> Simulate if rejected:
+        --> PATCH [UNLOCK] the branch for further edits following an approval rjection
+        --> POST a new comment to the branch comment section with reason for rejection
+    --> Simulate if approved:
         --> PATCH to /guidelines/:id
         --> DELETE that branch
         --> DELETE that approval
@@ -347,7 +351,84 @@ describe("Full Integration test", () => {
       String(new Date(Number(patchBranchBodyUserAdded.branchLastModified)))
     ).toContain(currentHour);
 
-    // 8. POST the newly updated branch to approvals endpoint (POST /api/approvals)
+    // 8. POST 2 new comments to the branch
+    let commentDateNow = Date.now();
+
+    let newComment = {
+      author: "katedillon",
+      body: "You need to re-review the evidence and references for chapter 2 section 3",
+      commentDate: commentDateNow,
+    };
+
+    const firstCommentSubmission = await request(app)
+      .post("/api/branches/cg104-chapter-0-edits/comments")
+      .send({ newComment })
+      .expect(200);
+
+    const firstComment = firstCommentSubmission.body.comment;
+
+    expect(firstComment).toBeInstanceOf(Object);
+    expect(firstComment).toEqual({
+      _id: expect.any(String),
+      author: "katedillon",
+      body: "You need to re-review the evidence and references for chapter 2 section 3",
+      commentDate: expect.any(String),
+    });
+
+    commentDateNow = Date.now();
+
+    newComment = {
+      author: "benlewry",
+      body: "Blah blah blah blah blah blah blah blah blah blah blah",
+      commentDate: commentDateNow,
+    };
+
+    const secondCommentSubmission = await request(app)
+      .post("/api/branches/cg104-chapter-0-edits/comments")
+      .send({ newComment })
+      .expect(200);
+
+    const secondComment = secondCommentSubmission.body.comment;
+
+    expect(secondComment).toBeInstanceOf(Object);
+    expect(secondComment).toEqual({
+      _id: expect.any(String),
+      author: "benlewry",
+      body: "Blah blah blah blah blah blah blah blah blah blah blah",
+      commentDate: expect.any(String),
+    });
+
+    // --> 8.5 - GET all comments and check both are there
+    let allBranchComments = await request(app)
+      .get("/api/branches/cg104-chapter-0-edits/comments")
+      .expect(200);
+
+    let allComments = allBranchComments.body.comments;
+
+    expect(allComments).toBeInstanceOf(Array);
+    expect(allComments).toHaveLength(2);
+    allComments.forEach((comment) => {
+      expect(comment).toMatchObject({
+        author: expect.any(String),
+        body: expect.any(String),
+        commentDate: expect.any(String),
+        _id: expect.any(String),
+      });
+    });
+    expect(allComments[0]).toEqual({
+      _id: expect.any(String),
+      author: "katedillon",
+      body: "You need to re-review the evidence and references for chapter 2 section 3",
+      commentDate: expect.any(String),
+    });
+    expect(allComments[1]).toEqual({
+      _id: expect.any(String),
+      author: "benlewry",
+      body: "Blah blah blah blah blah blah blah blah blah blah blah",
+      commentDate: expect.any(String),
+    });
+
+    // 9. POST the newly updated branch to approvals endpoint (POST /api/approvals)
     const currentApprovalDateTime = String(Date.now());
     const approvalToSetup = {
       type: patchBranchBodyUserAddedResponse.body.branch.type,
@@ -377,7 +458,7 @@ describe("Full Integration test", () => {
       guideline: patchBranchBodyUserAddedResponse.body.branch.guideline,
     });
 
-    // 9. Lock the current branch while it's pending approval to stop any further branch edits (PATCH /api/branches/:branch_name/lockbranch)
+    // 10. Lock the current branch while it's pending approval to stop any further branch edits (PATCH /api/branches/:branch_name/lockbranch)
     const patchBranchToLocked = await request(app)
       .patch("/api/branches/cg104-chapter-0-edits/lockbranch")
       .expect(200);
@@ -397,7 +478,7 @@ describe("Full Integration test", () => {
       "cg104-chapter-0-approval-request"
     );
 
-    // 11. GET Single Approval, new one created (GET /api/approval/:approval_name)
+    // 12. GET Single Approval, new one created (GET /api/approval/:approval_name)
     const singleApprovalResponse = await request(app)
       .get("/api/approvals/cg104-chapter-0-approval-request")
       .expect(200);
@@ -414,7 +495,8 @@ describe("Full Integration test", () => {
       guideline: patchBranchBodyUserAddedResponse.body.branch.guideline,
     });
 
-    // 12. Assume the Approval is DENIED, first the approval would be deleted (test is below), and unlocks the branch for further edits (PATCH /api/branches/:branch_name)
+    // 13. Assume the Approval is DENIED, first the approval would be deleted (test is below), and unlocks the branch for further edits (PATCH /api/branches/:branch_name)
+    // --> Also POST a new comment to the existing branch with a reason for the rejection/denial of approval
     // --> would have a test here to delete the approval but done below and test proved so skipping it
     const patchBranchToUnlocked = await request(app)
       .patch("/api/branches/cg104-chapter-0-edits/unlockbranch")
@@ -424,7 +506,54 @@ describe("Full Integration test", () => {
       false
     );
 
-    // 13. Now, assume the Approval request is APPROVED, first PATCH this finalised edited guideline to the main Guidelines endpoint AND that the Version number has incremented by +1 (PATCH /guidelines/:guideline_id)
+    commentDateNow = Date.now();
+
+    newComment = {
+      author: "jackprince",
+      body: "Approval has been declined on 25th June 2023 as several resources could not be verified and there is 1 spelling mistake in Chapter 4 section 2 which requires attention.",
+      commentDate: commentDateNow,
+    };
+
+    const approverCommentSubmission = await request(app)
+      .post("/api/branches/cg104-chapter-0-edits/comments")
+      .send({ newComment })
+      .expect(200);
+
+    const approverComment = approverCommentSubmission.body.comment;
+
+    expect(approverComment).toBeInstanceOf(Object);
+    expect(approverComment).toEqual({
+      _id: expect.any(String),
+      author: "jackprince",
+      body: "Approval has been declined on 25th June 2023 as several resources could not be verified and there is 1 spelling mistake in Chapter 4 section 2 which requires attention.",
+      commentDate: expect.any(String),
+    });
+
+    // 13.5 - Check the comment was added (Should now be 3 comments on this branch)
+    allBranchComments = await request(app)
+      .get("/api/branches/cg104-chapter-0-edits/comments")
+      .expect(200);
+
+    allComments = allBranchComments.body.comments;
+
+    expect(allComments).toBeInstanceOf(Array);
+    expect(allComments).toHaveLength(3);
+    allComments.forEach((comment) => {
+      expect(comment).toMatchObject({
+        author: expect.any(String),
+        body: expect.any(String),
+        commentDate: expect.any(String),
+        _id: expect.any(String),
+      });
+    });
+    expect(allComments[2]).toEqual({
+      _id: expect.any(String),
+      author: "jackprince",
+      body: "Approval has been declined on 25th June 2023 as several resources could not be verified and there is 1 spelling mistake in Chapter 4 section 2 which requires attention.",
+      commentDate: expect.any(String),
+    });
+
+    // 14. Now, assume the Approval request is APPROVED, first PATCH this finalised edited guideline to the main Guidelines endpoint AND that the Version number has incremented by +1 (PATCH /guidelines/:guideline_id)
     const patchedGuideline = structuredClone(
       patchBranchBodyUserAddedResponse.body.branch.guideline
     );
@@ -464,17 +593,17 @@ describe("Full Integration test", () => {
       ChangeDatePublished: dateNow,
     });
 
-    // 14. Now delete the relevant branch as approval is successful (DELETE /api/branches/:branch_name)
+    // 15. Now delete the relevant branch as approval is successful (DELETE /api/branches/:branch_name)
     await request(app)
       .delete("/api/branches/cg104-chapter-0-edits")
       .expect(204);
 
-    // 15. Now delete the approval as approval is successful and previous 2 requests were successful (DELETE /api/approvals/:approval_name)
+    // 16. Now delete the approval as approval is successful and previous 2 requests were successful (DELETE /api/approvals/:approval_name)
     await request(app)
       .delete("/api/approvals/cg104-chapter-0-approval-request")
       .expect(204);
 
-    // 16. Now do a final GET Single Guideline and check the edits have been made, and that they are now part of the new main version which users would see (GET /api/guidelines/:guideline_id)
+    // 17. Now do a final GET Single Guideline and check the edits have been made, and that they are now part of the new main version which users would see (GET /api/guidelines/:guideline_id)
     const finalSingleGuidelineResponse = await request(app)
       .get("/api/guidelines/CG104")
       .expect(200);

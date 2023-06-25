@@ -125,3 +125,42 @@ exports.updateOneBranchToUnLocked = async (branch_name) => {
 
   return branch;
 };
+
+exports.findAllBranchComments = async (branch_name) => {
+  const branch = await branchSchema.findOne({
+    branchName: branch_name,
+  });
+
+  const allComments = branch.comments;
+
+  return allComments;
+};
+
+exports.updateOneBranchWithNewComment = async (branch_name, newComment) => {
+  const { author, body } = newComment;
+
+  if (!author || !body) {
+    return Promise.reject({ status: 400, msg: "Bad Request" });
+  }
+
+  const branch = await branchSchema.findOne({
+    branchName: branch_name,
+  });
+
+  if (!branch) {
+    return Promise.reject({ status: 404, msg: "Branch not found" });
+  }
+
+  branch.comments.push(newComment);
+
+  const commentToRespondWith = branch.comments[branch.comments.length - 1];
+
+  await branchSchema.updateOne(
+    {
+      branchName: branch_name,
+    },
+    branch
+  );
+
+  return commentToRespondWith;
+};

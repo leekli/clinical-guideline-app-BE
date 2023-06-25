@@ -7,6 +7,8 @@ const {
   patchBranchWithNewAllowedUsers,
   patchBranchToLockedOnApprovalSubmission,
   patchBranchToUnlockedOnApprovalDenial,
+  patchBranchWithNewComment,
+  getBranchComments,
 } = require("../controllers/branches.controller");
 
 const branchesRouter = require("express").Router();
@@ -35,5 +37,11 @@ branchesRouter
 branchesRouter
   .route("/:branch_name/unlockbranch")
   .patch(patchBranchToUnlockedOnApprovalDenial);
+
+// HTTP Requests and Routes to /api/branches/:branch_name/comments
+branchesRouter
+  .route("/:branch_name/comments")
+  .get(getBranchComments)
+  .post(patchBranchWithNewComment);
 
 module.exports = branchesRouter;

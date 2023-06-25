@@ -703,9 +703,131 @@ describe("/api/branches Test Requests", () => {
       expect(res.body.branch.branchLockedForApproval).toBe(false);
     });
   });
+  describe("/api/branches/:branch_name/comments Requests", () => {
+    describe("/api/branches/:branch_name/comments POST Requests", () => {
+      test("Status 200: Should respond with 200 when a new comment is successfully added to the branch", async () => {
+        const dateNow = Date.now();
+
+        const newComment = {
+          author: "katedillon",
+          body: "You need to re-review the evidence and references for chapter 2 section 3",
+          commentDate: dateNow,
+        };
+
+        const res = await request(app)
+          .post("/api/branches/test-edit-branch/comments")
+          .send({ newComment })
+          .expect(200);
+
+        expect(res.body.comment).toEqual({
+          _id: expect.any(String),
+          author: "katedillon",
+          body: "You need to re-review the evidence and references for chapter 2 section 3",
+          commentDate: expect.any(String),
+        });
+      });
+      test("Status 200: Should respond with 200 and add a 2nd new comment to the same branch", async () => {
+        const dateNow = Date.now();
+
+        const newComment = {
+          author: "jasonparker",
+          body: "To follow up on Kate's point, the reference to xxx is 1 year out of date to standard",
+          commentDate: dateNow,
+        };
+
+        const res = await request(app)
+          .post("/api/branches/test-edit-branch/comments")
+          .send({ newComment })
+          .expect(200);
+
+        expect(res.body.comment).toEqual({
+          _id: expect.any(String),
+          author: "jasonparker",
+          body: "To follow up on Kate's point, the reference to xxx is 1 year out of date to standard",
+          commentDate: expect.any(String),
+        });
+      });
+    });
+    describe("/api/branches/:branch_name/comments GET Requests", () => {
+      test("Status 200: Should respond with 200 and all comments for a branch with has existing comments on a successful GET Request", async () => {
+        const res = await request(app)
+          .get("/api/branches/test-edit-branch/comments")
+          .expect(200);
+
+        expect(res.body.comments).toBeInstanceOf(Array);
+        expect(res.body.comments).toHaveLength(2);
+        res.body.comments.forEach((comment) => {
+          expect(comment).toMatchObject({
+            author: expect.any(String),
+            body: expect.any(String),
+            commentDate: expect.any(String),
+            _id: expect.any(String),
+          });
+        });
+        expect(res.body.comments[0]).toEqual({
+          author: "katedillon",
+          body: "You need to re-review the evidence and references for chapter 2 section 3",
+          commentDate: expect.any(String),
+          _id: expect.any(String),
+        });
+      });
+      test("Status 200: Should respond with 200 and all comments for a branch with has no comments on a successful GET Request", async () => {
+        const currentDateTime = String(Date.now());
+        const branchToSetup = {
+          type: "edit",
+          branchName: "another-test-branch",
+          branchSetupDateTime: currentDateTime,
+          branchOwner: "janedoe",
+          guideline: {
+            GuidanceNumber: "ZZ99",
+            GuidanceSlug: "test-guideline-slug",
+            GuidanceType: "Clinical guideline",
+            LongTitle: "Test guideline Long Title",
+            NHSEvidenceAccredited: false,
+            InformationStandardAccredited: false,
+            Chapters: [
+              {
+                ChapterId: "overview",
+                Title: "Overview",
+                Content:
+                  '<div class="chapter" title="Overview" id="ng232_overview" xmlns="http://www.w3.org/1999/xhtml">\r\n  <h2 class="title">\r\n    <a id="overview"></a>Overview</h2>\r\n  <p>XXX.</p>\r\n  <p>See <a class="link" href="https://www.nice.org.uk/guidance/ng40" target="_top" data-original-url="https://www.nice.org.uk/guidance/ng40">XXX.</p>\r\n</div>',
+                Sections: [
+                  {
+                    SectionId: "who-is-it-for",
+                    Title: "Who is it for?",
+                    Content:
+                      '<div class="section" title="Who is it for?" id="ng232_who-is-it-for" xmlns="http://www.w3.org/1999/xhtml">\r\n  <h3 class="title">\r\n    <a id="who-is-it-for"></a>Who is it for?</h3>\r\n  <div class="itemizedlist">\r\n    <ul class="itemizedlist">\r\n      <li class="listitem">\r\n        <p>Healthcare professionals</p>\r\n      </li>\r\n      <li class="listitem">\r\n        <p>People with a head injury, their families and carers</p>\r\n      </li>\r\n      <li class="listitem">\r\n        <p>Commissioners and providers</p>\r\n      </li>\r\n    </ul>\r\n  </div>\r\n</div>',
+                  },
+                ],
+              },
+            ],
+            LastModified: "/Date(1682502323341+0100)/",
+            Uri: "http://www.test-guideline.com/a/b/s",
+            Title: "This is a short title",
+          },
+        };
+
+        await request(app)
+          .post("/api/branches?type=edit")
+          .send(branchToSetup)
+          .expect(201);
+
+        const getComments = await request(app)
+          .get("/api/branches/another-test-branch/comments")
+          .expect(200);
+
+        expect(getComments.body.comments).toBeInstanceOf(Array);
+        expect(getComments.body.comments).toEqual([]);
+        expect(getComments.body.comments).toHaveLength(0);
+      });
+    });
+  });
   describe("/api/branches DELETE Requests", () => {
     test("Status 204: Should respond with a status 204 and no content when a branch is successfully deleted by branch_name", async () => {
       await request(app).delete("/api/branches/test-edit-branch").expect(204);
+      await request(app)
+        .delete("/api/branches/another-test-branch")
+        .expect(204);
     });
   });
   describe("/api/branches Error Handing", () => {
@@ -861,12 +983,126 @@ describe("/api/branches Test Requests", () => {
         await request(app).delete("/api/branches/test-branch").expect(204);
       });
     });
+    describe("/api/branches/:branch_name/comments POST Error Handling", () => {
+      test("Status 400: Missing selected required properties/Malformed body", async () => {
+        const currentDateTime = String(Date.now());
+        const branchToSetup = {
+          type: "edit",
+          branchName: "yet-another-test-branch",
+          branchSetupDateTime: currentDateTime,
+          branchOwner: "janedoe",
+          guideline: {
+            GuidanceNumber: "ZZ99",
+            GuidanceSlug: "test-guideline-slug",
+            GuidanceType: "Clinical guideline",
+            LongTitle: "Test guideline Long Title",
+            NHSEvidenceAccredited: false,
+            InformationStandardAccredited: false,
+            Chapters: [
+              {
+                ChapterId: "overview",
+                Title: "Overview",
+                Content:
+                  '<div class="chapter" title="Overview" id="ng232_overview" xmlns="http://www.w3.org/1999/xhtml">\r\n  <h2 class="title">\r\n    <a id="overview"></a>Overview</h2>\r\n  <p>XXX.</p>\r\n  <p>See <a class="link" href="https://www.nice.org.uk/guidance/ng40" target="_top" data-original-url="https://www.nice.org.uk/guidance/ng40">XXX.</p>\r\n</div>',
+                Sections: [
+                  {
+                    SectionId: "who-is-it-for",
+                    Title: "Who is it for?",
+                    Content:
+                      '<div class="section" title="Who is it for?" id="ng232_who-is-it-for" xmlns="http://www.w3.org/1999/xhtml">\r\n  <h3 class="title">\r\n    <a id="who-is-it-for"></a>Who is it for?</h3>\r\n  <div class="itemizedlist">\r\n    <ul class="itemizedlist">\r\n      <li class="listitem">\r\n        <p>Healthcare professionals</p>\r\n      </li>\r\n      <li class="listitem">\r\n        <p>People with a head injury, their families and carers</p>\r\n      </li>\r\n      <li class="listitem">\r\n        <p>Commissioners and providers</p>\r\n      </li>\r\n    </ul>\r\n  </div>\r\n</div>',
+                  },
+                ],
+              },
+            ],
+            LastModified: "/Date(1682502323341+0100)/",
+            Uri: "http://www.test-guideline.com/a/b/s",
+            Title: "This is a short title",
+          },
+        };
 
+        await request(app)
+          .post("/api/branches?type=edit")
+          .send(branchToSetup)
+          .expect(201);
+
+        const dateNow = Date.now();
+
+        const newComment = {
+          body: "You need to re-review the evidence and references for chapter 2 section 3",
+          commentDate: dateNow,
+        };
+
+        const res = await request(app)
+          .post("/api/branches/yet-another-test-branch/comments")
+          .send({ newComment })
+          .expect(400);
+
+        expect(res.body.msg).toBe("Bad Request");
+      });
+      test("Status 400: Missing selected required properties/Malformed body", async () => {
+        const dateNow = Date.now();
+
+        const newComment = {
+          author: "janedoe",
+          commentDate: dateNow,
+        };
+
+        const res = await request(app)
+          .post("/api/branches/yet-another-test-branch/comments")
+          .send({ newComment })
+          .expect(400);
+
+        expect(res.body.msg).toBe("Bad Request");
+      });
+      test("Status 400: Missing all properties/Malformed body", async () => {
+        const newComment = {};
+
+        const res = await request(app)
+          .post("/api/branches/yet-another-test-branch/comments")
+          .send({ newComment })
+          .expect(400);
+
+        expect(res.body.msg).toBe("Bad Request");
+      });
+      test("Status 404: Branch name does not exist", async () => {
+        const dateNow = Date.now();
+
+        const newComment = {
+          author: "janedoe",
+          body: "You need to re-review the evidence and references for chapter 2 section 3",
+          commentDate: dateNow,
+        };
+
+        let res = await request(app)
+          .post("/api/branches/not-a-branch/comments")
+          .send({ newComment })
+          .expect(404);
+
+        expect(res.body.msg).toBe("Branch not found");
+
+        await request(app)
+          .delete("/api/branches/yet-another-test-branch")
+          .expect(204);
+
+        res = await request(app)
+          .post("/api/branches/not-a-branch/comments")
+          .send({ newComment })
+          .expect(404);
+
+        expect(res.body.msg).toBe("Branch not found");
+      });
+    });
     describe("/api/branches DELETE Error Handling", () => {
       test("Status 404: Branch Name does not exist", async () => {
         let res = await request(app).delete("/api/branches/AB123").expect(404);
         expect(res.body.msg).toBe("Branch not found");
         res = await request(app).delete("/api/branches/999ZZ").expect(404);
+        expect(res.body.msg).toBe("Branch not found");
+      });
+      test("Status 404: Branch name which used to exist, no longer does and has been properly deleted", async () => {
+        const res = await request(app)
+          .delete("/api/branches/test-edit-branch")
+          .expect(404);
         expect(res.body.msg).toBe("Branch not found");
       });
     });

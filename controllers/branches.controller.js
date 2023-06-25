@@ -7,6 +7,8 @@ const {
   updateOneBranchWithNewAllowedUser,
   updateOneBranchToLocked,
   updateOneBranchToUnLocked,
+  updateOneBranchWithNewComment,
+  findAllBranchComments,
 } = require("../models/branches.model");
 
 exports.getBranches = async (req, res, next) => {
@@ -119,6 +121,34 @@ exports.patchBranchToUnlockedOnApprovalDenial = async (req, res, next) => {
     const branch = await updateOneBranchToUnLocked(branch_name);
 
     res.status(200).send({ branch });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.getBranchComments = async (req, res, next) => {
+  try {
+    const { branch_name } = req.params;
+
+    const comments = await findAllBranchComments(branch_name);
+
+    res.status(200).send({ comments });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.patchBranchWithNewComment = async (req, res, next) => {
+  try {
+    const { newComment } = req.body;
+    const { branch_name } = req.params;
+
+    const comment = await updateOneBranchWithNewComment(
+      branch_name,
+      newComment
+    );
+
+    res.status(200).send({ comment });
   } catch (err) {
     next(err);
   }
