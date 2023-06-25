@@ -2,7 +2,6 @@ const request = require("supertest");
 const app = require("../app");
 const mongoose = require("mongoose");
 const seed = require("../data/seed");
-const fs = require("fs/promises");
 
 beforeAll(async () => {
   await seed();
@@ -47,6 +46,7 @@ describe("/api/guidelines Test Requests", () => {
           LastModified: expect.any(String),
           Uri: expect.any(String),
           Title: expect.any(String),
+          GuidelineCurrentVersion: expect.any(Number),
         });
       });
     });
@@ -80,6 +80,7 @@ describe("/api/guidelines Test Requests", () => {
           "diabetes-type-1-and-type-2-in-children-and-young-people-diagnosis-and-ng18",
         LongTitle:
           "Diabetes (type 1 and type 2) in children and young people: diagnosis and management (NG18)",
+        GuidelineCurrentVersion: 1.0,
       });
     });
     test("Returns status 200 and single relevant guideline when used with a search param on /api/guidelines?search=covid", async () => {
@@ -94,6 +95,7 @@ describe("/api/guidelines Test Requests", () => {
           "covid-19-rapid-guideline-managing-the-long-term-effects-of-covid-19-ng188",
         LongTitle:
           "COVID-19 rapid guideline: managing the long-term effects of COVID-19 (NG188)",
+        GuidelineCurrentVersion: 1.0,
       });
     });
     test("Returns status 200 and single relevant guideline when used with a search param with a space in between on /api/guidelines?search=multiple+sclerosis", async () => {
@@ -106,6 +108,7 @@ describe("/api/guidelines Test Requests", () => {
         GuidanceNumber: "QS108",
         GuidanceSlug: "multiple-sclerosis-qs108",
         LongTitle: "Multiple sclerosis (QS108)",
+        GuidelineCurrentVersion: 1.0,
       });
     });
     test("Returns status 200 and multiple relevant guidelines when used with a search param on /api/guidelines?search=hypertension", async () => {
@@ -185,6 +188,7 @@ describe("/api/guidelines Test Requests", () => {
       expect(res.body.guideline.Chapters[0].Sections[0].Title).toBe(
         "Who is it for?"
       );
+      expect(res.body.guideline.GuidelineCurrentVersion).toBe(1.0);
     });
   });
   describe("/api/guidelines PATCH Requests", () => {
@@ -192,12 +196,11 @@ describe("/api/guidelines Test Requests", () => {
       const chapterNum = 0;
       const sectionNum = 1;
 
-      const testGuidelineReadFile = await fs.readFile(
-        `${__dirname}/../data/guideline-data/02.json`,
-        "utf-8"
-      );
+      const getSingleGuideline = await request(app)
+        .get("/api/guidelines/CG181")
+        .expect(200);
 
-      const testGuidelineJSON = JSON.parse(testGuidelineReadFile);
+      const singleGuideline = getSingleGuideline.body.guideline;
 
       const patchBody = {
         SectionId:
@@ -207,9 +210,9 @@ describe("/api/guidelines Test Requests", () => {
           '<div class="section" title="1.2 Aspirin for primary prevention of cardiovascular disease" id="cg181_1.2-aspirin-for-primary-prevention-of-cardiovascular-disease" xmlns="http://www.w3.org/1999/xhtml">\r\n  <h3 class="title">\r\n    <a id="aspirin-for-primary-prevention-of-cardiovascular-disease"></a>1.2 Aspirin for primary prevention of cardiovascular disease</h3>\r\n  <div id="cg181_1_2_1" class="recommendation_text">\r\n    <p class="numbered-paragraph">\r\n      <span class="paragraph-number">1.2.1 </span>AMEND Do not routinely offer aspirin for primary prevention of CVD. <strong>[2023]</strong></p>\r\n    <p>THIS IS A FULLY AMENDED SECTION, see <a class="link" href="https://www.nice.org.uk/guidance/ng89" target="_top" data-original-url="https://www.nice.org.uk/guidance/ng89">NICE\'s guideline on venous thromboembolism in over 16s: reducing the risk of hospital-acquired deep vein thrombosis or pulmonary embolism</a>.</p>\r\n    <div class="panel">\r\n      <p>ONE MORE EDIT <a class="link" href="https://www.nice.org.uk/guidance/cg181/resources/2023-exceptional-surveillance-of-cardiovascular-disease-risk-assessment-and-reduction-including-lipid-modification-nice-guideline-cg181-11322671149/chapter/Surveillance-decision?tab=evidence" target="_top">January 2023 exceptional surveillance report</a>. </p>\r\n    </div>\r\n  </div>\r\n</div>',
       };
 
-      testGuidelineJSON.Chapters[chapterNum].Sections[sectionNum] = patchBody;
+      singleGuideline.Chapters[chapterNum].Sections[sectionNum] = patchBody;
 
-      const patchedGuideline = testGuidelineJSON;
+      const patchedGuideline = singleGuideline;
 
       const expected =
         '<div class="section" title="1.2 Aspirin for primary prevention of cardiovascular disease" id="cg181_1.2-aspirin-for-primary-prevention-of-cardiovascular-disease" xmlns="http://www.w3.org/1999/xhtml">\r\n  <h3 class="title">\r\n    <a id="aspirin-for-primary-prevention-of-cardiovascular-disease"></a>1.2 Aspirin for primary prevention of cardiovascular disease</h3>\r\n  <div id="cg181_1_2_1" class="recommendation_text">\r\n    <p class="numbered-paragraph">\r\n      <span class="paragraph-number">1.2.1 </span>AMEND Do not routinely offer aspirin for primary prevention of CVD. <strong>[2023]</strong></p>\r\n    <p>THIS IS A FULLY AMENDED SECTION, see <a class="link" href="https://www.nice.org.uk/guidance/ng89" target="_top" data-original-url="https://www.nice.org.uk/guidance/ng89">NICE\'s guideline on venous thromboembolism in over 16s: reducing the risk of hospital-acquired deep vein thrombosis or pulmonary embolism</a>.</p>\r\n    <div class="panel">\r\n      <p>ONE MORE EDIT <a class="link" href="https://www.nice.org.uk/guidance/cg181/resources/2023-exceptional-surveillance-of-cardiovascular-disease-risk-assessment-and-reduction-including-lipid-modification-nice-guideline-cg181-11322671149/chapter/Surveillance-decision?tab=evidence" target="_top">January 2023 exceptional surveillance report</a>. </p>\r\n    </div>\r\n  </div>\r\n</div>';
@@ -228,6 +231,34 @@ describe("/api/guidelines Test Requests", () => {
       expect(
         res.body.guideline.Chapters[chapterNum].Sections[sectionNum].Content
       ).toEqual(expected);
+    });
+    test("PATCH Status 200: Updates the version number by +1 on a successful PATCH", async () => {
+      const chapterNum = 1;
+      const sectionNum = 0;
+
+      const getSingleGuideline = await request(app)
+        .get("/api/guidelines/QS65")
+        .expect(200);
+
+      const singleGuideline = getSingleGuideline.body.guideline;
+
+      const patchBody = {
+        SectionId: "quality-statement",
+        Title: "Quality statement",
+        Content:
+          '<div class="section" title="Quality statement" id="qs65_quality-statement" xmlns="http://www.w3.org/1999/xhtml">\r\n  <h3 class="title">\r\n    <a id="quality-statement"></a>Quality statement</h3>\r\n  <p>I AM AN AMENDED PARAGRAPH ELEMENT</p>\r\n</div>',
+      };
+
+      singleGuideline.Chapters[chapterNum].Sections[sectionNum] = patchBody;
+
+      const patchedGuideline = singleGuideline;
+
+      const res = await request(app)
+        .patch("/api/guidelines/QS65")
+        .send({ patchedGuideline })
+        .expect(200);
+
+      expect(res.body.guideline.GuidelineCurrentVersion).toBe(2.0);
     });
   });
   describe("/api/guidelines DELETE Requests", () => {

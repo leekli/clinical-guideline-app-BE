@@ -410,7 +410,7 @@ describe("Full Integration test", () => {
       guideline: patchBranchBodyUserAddedResponse.body.branch.guideline,
     });
 
-    // 12. Assume the Approval is DENIED, first the approval would be deleted (test is below), and unlocks the branch for further edits
+    // 12. Assume the Approval is DENIED, first the approval would be deleted (test is below), and unlocks the branch for further edits (PATCH /api/branches/:branch_name)
     // --> would have a test here to delete the approval but done below and test proved so skipping it
     const patchBranchToUnlocked = await request(app)
       .patch("/api/branches/cg104-chapter-0-edits/unlockbranch")
@@ -420,7 +420,7 @@ describe("Full Integration test", () => {
       false
     );
 
-    // 13. Now, assume the Approval request is APPROVED, first PATCH this finalised edited guideline to the main Guidelines endpoint (PATCH /guidelines/:guideline_id)
+    // 13. Now, assume the Approval request is APPROVED, first PATCH this finalised edited guideline to the main Guidelines endpoint AND that the Version number has incremented by +1 (PATCH /guidelines/:guideline_id)
     const patchedGuideline = structuredClone(
       patchBranchBodyUserAddedResponse.body.branch.guideline
     );
@@ -441,15 +441,47 @@ describe("Full Integration test", () => {
     expect(
       patchGuidelineInfo.Chapters[chapterNum].Sections[sectionNum].Content
     ).toEqual(expected);
+    expect(patchGuidelineInfo.GuidelineCurrentVersion).toEqual(2.0);
 
-    // 14. Now delete the relevant branch as approval is successful
+    // 14. Now delete the relevant branch as approval is successful (DELETE /api/branches/:branch_name)
     await request(app)
       .delete("/api/branches/cg104-chapter-0-edits")
       .expect(204);
 
-    // 15. Now delete the approval as approval is successful and previous 2 requests were successful
+    // 15. Now delete the approval as approval is successful and previous 2 requests were successful (DELETE /api/approvals/:approval_name)
     await request(app)
       .delete("/api/approvals/cg104-chapter-0-approval-request")
       .expect(204);
+
+    // 16. Now do a final GET Single Guideline and check the edits have been made, and that they are now part of the new main version which users would see (GET /api/guidelines/:guideline_id)
+    const finalSingleGuidelineResponse = await request(app)
+      .get("/api/guidelines/CG104")
+      .expect(200);
+
+    const finalSingleGuideline = finalSingleGuidelineResponse.body.guideline;
+
+    expect(finalSingleGuideline).toBeInstanceOf(Object);
+    expect(finalSingleGuideline).toMatchObject({
+      _id: expect.any(String),
+      GuidanceNumber: "CG104",
+      GuidanceSlug:
+        "metastatic-malignant-disease-of-unknown-primary-origin-in-adults-diagn-cg104",
+      GuidanceType: "Clinical guideline",
+      LongTitle:
+        "Metastatic malignant disease of unknown primary origin in adults: diagnosis and management (CG104)",
+      MetadataApplicationProfile: expect.any(Object),
+      NHSEvidenceAccredited: true,
+      InformationStandardAccredited: false,
+      Chapters: expect.any(Array),
+      LastModified: "/Date(1682502323341+0100)/",
+      Uri: "https://api.nice.org.uk/services/guidance/structured-documents/CG104",
+      Title:
+        "Metastatic malignant disease of unknown primary origin in adults: diagnosis and management",
+      TitleContent: null,
+      GuidelineCurrentVersion: 2,
+    });
+    expect(
+      finalSingleGuideline.Chapters[chapterNum].Sections[sectionNum].Content
+    ).toEqual(expected);
   });
 });

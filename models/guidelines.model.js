@@ -49,6 +49,9 @@ exports.updateGuidelineByNumber = async (guideline_id, patchedGuideline) => {
 
   const copiedGuideline = structuredClone(patchedGuideline);
 
+  // Updates the version number by +1
+  copiedGuideline.GuidelineCurrentVersion++;
+
   const guideline = await guidelineSchema.findOne({
     GuidanceNumber: guideline_id,
   });

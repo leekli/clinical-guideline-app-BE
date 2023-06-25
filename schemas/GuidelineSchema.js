@@ -37,6 +37,10 @@ const guidelineSchema = new mongoose.Schema({
   TitleContent: {
     type: String,
   },
+  GuidelineCurrentVersion: {
+    type: Number,
+    default: 1.0,
+  },
 });
 
 module.exports = mongoose.model("Guideline", guidelineSchema);
