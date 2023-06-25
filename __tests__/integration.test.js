@@ -429,9 +429,19 @@ describe("Full Integration test", () => {
       patchBranchBodyUserAddedResponse.body.branch.guideline
     );
 
+    const dateNow = Date.now();
+
+    const submissionInfo = {
+      ChangeNumber: 0,
+      ChangeDescription:
+        "Amends CG104 Chapter 1 with edits to the Factors influencing management decisions section to make points 1 and 2 clearer",
+      ChangeOwner: "joebloggs",
+      ChangeDatePublished: dateNow,
+    };
+
     const patchGuidelineResponse = await request(app)
       .patch("/api/guidelines/CG104")
-      .send({ patchedGuideline })
+      .send({ patchedGuideline, submissionInfo })
       .expect(200);
 
     const patchGuidelineInfo = patchGuidelineResponse.body.guideline;
@@ -446,6 +456,13 @@ describe("Full Integration test", () => {
       patchGuidelineInfo.Chapters[chapterNum].Sections[sectionNum].Content
     ).toEqual(expected);
     expect(patchGuidelineInfo.GuidelineCurrentVersion).toEqual(2.0);
+    expect(patchGuidelineInfo.GuidelineChangeHistoryDescriptions[0]).toEqual({
+      ChangeNumber: 0,
+      ChangeDescription:
+        "Amends CG104 Chapter 1 with edits to the Factors influencing management decisions section to make points 1 and 2 clearer",
+      ChangeOwner: "joebloggs",
+      ChangeDatePublished: dateNow,
+    });
 
     // 14. Now delete the relevant branch as approval is successful (DELETE /api/branches/:branch_name)
     await request(app)
@@ -483,6 +500,15 @@ describe("Full Integration test", () => {
         "Metastatic malignant disease of unknown primary origin in adults: diagnosis and management",
       TitleContent: null,
       GuidelineCurrentVersion: 2,
+      GuidelineChangeHistoryDescriptions: [
+        {
+          ChangeNumber: 0,
+          ChangeDescription:
+            "Amends CG104 Chapter 1 with edits to the Factors influencing management decisions section to make points 1 and 2 clearer",
+          ChangeOwner: "joebloggs",
+          ChangeDatePublished: String(dateNow),
+        },
+      ],
     });
     expect(
       finalSingleGuideline.Chapters[chapterNum].Sections[sectionNum].Content

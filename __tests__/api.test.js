@@ -47,6 +47,7 @@ describe("/api/guidelines Test Requests", () => {
           Uri: expect.any(String),
           Title: expect.any(String),
           GuidelineCurrentVersion: expect.any(Number),
+          GuidelineChangeHistoryDescriptions: expect.any(Array),
         });
       });
     });
@@ -81,6 +82,7 @@ describe("/api/guidelines Test Requests", () => {
         LongTitle:
           "Diabetes (type 1 and type 2) in children and young people: diagnosis and management (NG18)",
         GuidelineCurrentVersion: 1.0,
+        GuidelineChangeHistoryDescriptions: [],
       });
     });
     test("Returns status 200 and single relevant guideline when used with a search param on /api/guidelines?search=covid", async () => {
@@ -109,6 +111,7 @@ describe("/api/guidelines Test Requests", () => {
         GuidanceSlug: "multiple-sclerosis-qs108",
         LongTitle: "Multiple sclerosis (QS108)",
         GuidelineCurrentVersion: 1.0,
+        GuidelineChangeHistoryDescriptions: [],
       });
     });
     test("Returns status 200 and multiple relevant guidelines when used with a search param on /api/guidelines?search=hypertension", async () => {
@@ -189,6 +192,7 @@ describe("/api/guidelines Test Requests", () => {
         "Who is it for?"
       );
       expect(res.body.guideline.GuidelineCurrentVersion).toBe(1.0);
+      expect(res.body.guideline.GuidelineChangeHistoryDescriptions).toEqual([]);
     });
   });
   describe("/api/guidelines PATCH Requests", () => {
@@ -214,12 +218,21 @@ describe("/api/guidelines Test Requests", () => {
 
       const patchedGuideline = singleGuideline;
 
+      const dateNow = Date.now();
+
+      const submissionInfo = {
+        ChangeNumber: 0,
+        ChangeDescription: "Slight amendment to the quality statement section",
+        ChangeOwner: "joebloggs",
+        ChangeDatePublished: dateNow,
+      };
+
       const expected =
         '<div class="section" title="1.2 Aspirin for primary prevention of cardiovascular disease" id="cg181_1.2-aspirin-for-primary-prevention-of-cardiovascular-disease" xmlns="http://www.w3.org/1999/xhtml">\r\n  <h3 class="title">\r\n    <a id="aspirin-for-primary-prevention-of-cardiovascular-disease"></a>1.2 Aspirin for primary prevention of cardiovascular disease</h3>\r\n  <div id="cg181_1_2_1" class="recommendation_text">\r\n    <p class="numbered-paragraph">\r\n      <span class="paragraph-number">1.2.1 </span>AMEND Do not routinely offer aspirin for primary prevention of CVD. <strong>[2023]</strong></p>\r\n    <p>THIS IS A FULLY AMENDED SECTION, see <a class="link" href="https://www.nice.org.uk/guidance/ng89" target="_top" data-original-url="https://www.nice.org.uk/guidance/ng89">NICE\'s guideline on venous thromboembolism in over 16s: reducing the risk of hospital-acquired deep vein thrombosis or pulmonary embolism</a>.</p>\r\n    <div class="panel">\r\n      <p>ONE MORE EDIT <a class="link" href="https://www.nice.org.uk/guidance/cg181/resources/2023-exceptional-surveillance-of-cardiovascular-disease-risk-assessment-and-reduction-including-lipid-modification-nice-guideline-cg181-11322671149/chapter/Surveillance-decision?tab=evidence" target="_top">January 2023 exceptional surveillance report</a>. </p>\r\n    </div>\r\n  </div>\r\n</div>';
 
       const res = await request(app)
         .patch("/api/guidelines/CG181")
-        .send({ patchedGuideline })
+        .send({ patchedGuideline, submissionInfo })
         .expect(200);
 
       expect(
@@ -232,7 +245,7 @@ describe("/api/guidelines Test Requests", () => {
         res.body.guideline.Chapters[chapterNum].Sections[sectionNum].Content
       ).toEqual(expected);
     });
-    test("PATCH Status 200: Updates the version number by +1 on a successful PATCH", async () => {
+    test("PATCH Status 200: Updates the version number by +1 and adds a new entry into GuidelineChangeHistoryDescriptions property on a successful PATCH", async () => {
       const chapterNum = 1;
       const sectionNum = 0;
 
@@ -253,12 +266,27 @@ describe("/api/guidelines Test Requests", () => {
 
       const patchedGuideline = singleGuideline;
 
+      const dateNow = Date.now();
+
+      const submissionInfo = {
+        ChangeNumber: 0,
+        ChangeDescription: "Slight amendment to the quality statement section",
+        ChangeOwner: "joebloggs",
+        ChangeDatePublished: dateNow,
+      };
+
       const res = await request(app)
         .patch("/api/guidelines/QS65")
-        .send({ patchedGuideline })
+        .send({ patchedGuideline, submissionInfo })
         .expect(200);
 
       expect(res.body.guideline.GuidelineCurrentVersion).toBe(2.0);
+      expect(res.body.guideline.GuidelineChangeHistoryDescriptions[0]).toEqual({
+        ChangeNumber: 0,
+        ChangeDescription: "Slight amendment to the quality statement section",
+        ChangeOwner: "joebloggs",
+        ChangeDatePublished: dateNow,
+      });
     });
   });
   describe("/api/guidelines DELETE Requests", () => {
@@ -305,18 +333,29 @@ describe("/api/guidelines Test Requests", () => {
       test("Status 404: Guideline ID/Number does not exist", async () => {
         const patchedGuideline = { keyName: "Test" };
 
+        const dateNow = Date.now();
+
+        const submissionInfo = {
+          ChangeNumber: 0,
+          ChangeDescription:
+            "Slight amendment to the quality statement section",
+          ChangeOwner: "joebloggs",
+          ChangeDatePublished: dateNow,
+        };
+
         const res = await request(app)
           .patch("/api/guidelines/ZZ999")
-          .send({ patchedGuideline })
+          .send({ patchedGuideline, submissionInfo })
           .expect(404);
         expect(res.body.msg).toBe("Guideline not found");
       });
       test("Status 400: Malformed body - nothing submitted for patchBody", async () => {
         const patchedGuideline = {};
+        const submissionInfo = {};
 
         const res = await request(app)
           .patch("/api/guidelines/NG133")
-          .send({ patchedGuideline })
+          .send({ patchedGuideline, submissionInfo })
           .expect(400);
         expect(res.body.msg).toBe("Bad Request");
       });

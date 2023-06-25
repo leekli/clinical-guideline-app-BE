@@ -41,6 +41,17 @@ const guidelineSchema = new mongoose.Schema({
     type: Number,
     default: 1.0,
   },
+  GuidelineChangeHistoryDescriptions: {
+    type: [
+      {
+        ChangeNumber: Number,
+        ChangeDescription: String,
+        ChangeOwner: String,
+        ChangeDatePublished: String,
+      },
+    ],
+    default: [],
+  },
 });
 
 module.exports = mongoose.model("Guideline", guidelineSchema);

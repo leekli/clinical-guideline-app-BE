@@ -42,30 +42,40 @@ exports.insertNewGuideline = async (postBody) => {
   return await guidelineSchema.create(postBody);
 };
 
-exports.updateGuidelineByNumber = async (guideline_id, patchedGuideline) => {
+exports.updateGuidelineByNumber = async (
+  guideline_id,
+  patchedGuideline,
+  submissionInfo
+) => {
   if (Object.keys(patchedGuideline).length === 0) {
     return Promise.reject({ status: 400, msg: "Bad Request" });
   }
-
-  const copiedGuideline = structuredClone(patchedGuideline);
-
-  // Updates the version number by +1
-  copiedGuideline.GuidelineCurrentVersion++;
 
   const guideline = await guidelineSchema.findOne({
     GuidanceNumber: guideline_id,
   });
 
-  if (!guideline) {
+  if (!guideline)
     return Promise.reject({ status: 404, msg: "Guideline not found" });
-  } else {
-    await guidelineSchema.updateOne(
-      {
-        GuidanceNumber: guideline_id,
-      },
-      copiedGuideline
-    );
 
-    return copiedGuideline;
-  }
+  const copiedGuideline = structuredClone(patchedGuideline);
+  const copiedSubmissionInfo = structuredClone(submissionInfo);
+
+  // Updates the version number by +1
+  copiedGuideline.GuidelineCurrentVersion++;
+
+  // Updates the Change History Log with this new submission (Update ChangeNumber first)
+  copiedSubmissionInfo.ChangeNumber =
+    copiedGuideline.GuidelineChangeHistoryDescriptions.length;
+
+  copiedGuideline.GuidelineChangeHistoryDescriptions.push(copiedSubmissionInfo);
+
+  await guidelineSchema.updateOne(
+    {
+      GuidanceNumber: guideline_id,
+    },
+    copiedGuideline
+  );
+
+  return copiedGuideline;
 };
