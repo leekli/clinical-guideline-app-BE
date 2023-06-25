@@ -353,6 +353,8 @@ describe("Full Integration test", () => {
       type: patchBranchBodyUserAddedResponse.body.branch.type,
       approvalRequestName: "cg104-chapter-0-approval-request",
       approvalSetupDateTime: currentApprovalDateTime,
+      approvalPurposeDescription:
+        "This is a test approval submission description",
       branchOwner: patchBranchBodyUserAddedResponse.body.branch.branchOwner,
       guideline: patchBranchBodyUserAddedResponse.body.branch.guideline,
     };
@@ -369,6 +371,8 @@ describe("Full Integration test", () => {
       type: "edit",
       approvalRequestName: "cg104-chapter-0-approval-request",
       approvalSetupDateTime: currentApprovalDateTime,
+      approvalPurposeDescription:
+        "This is a test approval submission description",
       branchOwner: "joebloggs",
       guideline: patchBranchBodyUserAddedResponse.body.branch.guideline,
     });

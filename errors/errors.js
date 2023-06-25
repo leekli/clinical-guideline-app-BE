@@ -21,7 +21,7 @@ exports.handleMdbErrors = (err, req, res, next) => {
     err.name === "MissingSchemaError" ||
     err.name === "ValidationError"
   ) {
-    res.status(400).json({ msg: "Bad request" });
+    res.status(400).json({ msg: "Bad Request" });
   } else {
     next(err);
   }
@@ -29,5 +29,5 @@ exports.handleMdbErrors = (err, req, res, next) => {
 
 exports.handleServerErrors = (err, req, res, next) => {
   console.log(err);
-  res.status(500).send({ msg: "Internal server error" });
+  res.status(500).send({ msg: "Internal Server Error" });
 };

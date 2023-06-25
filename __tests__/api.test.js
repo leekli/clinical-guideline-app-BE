@@ -842,6 +842,8 @@ describe("/api/approvals Test Requests", () => {
         type: "edit",
         approvalRequestName: "test-approval-request",
         approvalSetupDateTime: currentDateTime,
+        approvalPurposeDescription:
+          "A number of edits have been made to Chapter 1 Section 1 to streamline the text",
         branchOwner: "joebloggs",
         guideline: {
           GuidanceNumber: "AB01",
@@ -883,6 +885,8 @@ describe("/api/approvals Test Requests", () => {
         type: "edit",
         approvalRequestName: "test-approval-request",
         approvalSetupDateTime: currentDateTime,
+        approvalPurposeDescription:
+          "A number of edits have been made to Chapter 1 Section 1 to streamline the text",
         branchOwner: "joebloggs",
         guideline: {
           GuidanceNumber: "AB01",
@@ -923,6 +927,8 @@ describe("/api/approvals Test Requests", () => {
         type: "edit",
         approvalRequestName: "test-approval-request",
         approvalSetupDateTime: expect.any(String),
+        approvalPurposeDescription:
+          "A number of edits have been made to Chapter 1 Section 1 to streamline the text",
         branchOwner: "joebloggs",
         guideline: {
           GuidanceNumber: "AB01",
@@ -965,6 +971,7 @@ describe("/api/approvals Test Requests", () => {
           type: expect.any(String),
           approvalRequestName: expect.any(String),
           approvalSetupDateTime: expect.any(String),
+          approvalPurposeDescription: expect.any(String),
           branchOwner: expect.any(String),
           guideline: {
             GuidanceNumber: expect.any(String),
@@ -1046,6 +1053,49 @@ describe("/api/approvals Test Requests", () => {
           .post("/api/approvals?type=edit")
           .send(approvalToSetup)
           .expect(400);
+        expect(res.body.msg).toBe("Bad Request");
+      });
+      test("Status 400: One required property missing in the body", async () => {
+        const currentDateTime = String(Date.now());
+        const approvalToSetup = {
+          type: "edit",
+          approvalRequestName: "test-approval-request",
+          approvalSetupDateTime: currentDateTime,
+          branchOwner: "joebloggs",
+          guideline: {
+            GuidanceNumber: "AB01",
+            GuidanceSlug: "test-guideline-slug",
+            GuidanceType: "Clinical guideline",
+            LongTitle: "Test guideline Long Title",
+            NHSEvidenceAccredited: false,
+            InformationStandardAccredited: false,
+            Chapters: [
+              {
+                ChapterId: "overview",
+                Title: "Overview",
+                Content:
+                  '<div class="chapter" title="Overview" id="ng232_overview" xmlns="http://www.w3.org/1999/xhtml">\r\n  <h2 class="title">\r\n    <a id="overview"></a>Overview</h2>\r\n  <p>XXX.</p>\r\n  <p>See <a class="link" href="https://www.nice.org.uk/guidance/ng40" target="_top" data-original-url="https://www.nice.org.uk/guidance/ng40">XXX.</p>\r\n</div>',
+                Sections: [
+                  {
+                    SectionId: "who-is-it-for",
+                    Title: "Who is it for?",
+                    Content:
+                      '<div class="section" title="Who is it for?" id="ng232_who-is-it-for" xmlns="http://www.w3.org/1999/xhtml">\r\n  <h3 class="title">\r\n    <a id="who-is-it-for"></a>Who is it for?</h3>\r\n  <div class="itemizedlist">\r\n    <ul class="itemizedlist">\r\n      <li class="listitem">\r\n        <p>Healthcare professionals</p>\r\n      </li>\r\n      <li class="listitem">\r\n        <p>People with a head injury, their families and carers</p>\r\n      </li>\r\n      <li class="listitem">\r\n        <p>Commissioners and providers</p>\r\n      </li>\r\n    </ul>\r\n  </div>\r\n</div>',
+                  },
+                ],
+              },
+            ],
+            LastModified: "/Date(1682502323341+0100)/",
+            Uri: "http://www.test-guideline.com/a/b/s",
+            Title: "This is a short title",
+          },
+        };
+
+        const res = await request(app)
+          .post("/api/approvals?type=edit")
+          .send(approvalToSetup)
+          .expect(400);
+
         expect(res.body.msg).toBe("Bad Request");
       });
     });

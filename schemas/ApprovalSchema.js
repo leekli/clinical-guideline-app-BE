@@ -13,6 +13,10 @@ const approvalSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  approvalPurposeDescription: {
+    type: String,
+    required: true,
+  },
   branchOwner: {
     type: String,
     required: true,
