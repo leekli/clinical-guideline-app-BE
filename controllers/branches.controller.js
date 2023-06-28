@@ -9,6 +9,7 @@ const {
   updateOneBranchToUnLocked,
   updateOneBranchWithNewComment,
   findAllBranchComments,
+  createNewCreateBranch,
 } = require("../models/branches.model");
 
 exports.getBranches = async (req, res, next) => {
@@ -45,6 +46,9 @@ exports.postBranch = async (req, res, next) => {
 
     if (type === "edit") {
       branch = await createNewEditBranch(branchBody);
+      res.status(201).send({ branch });
+    } else if (type === "create") {
+      branch = await createNewCreateBranch(branchBody);
       res.status(201).send({ branch });
     }
   } catch (err) {

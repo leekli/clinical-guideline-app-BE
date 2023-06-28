@@ -524,12 +524,117 @@ describe("/api/branches Test Requests", () => {
         },
       });
     });
+    test("Status 201: Should setup a new branch with relevant properties when POST request made with a type of 'create', generates a basic guideline template", async () => {
+      const currentDateTime = String(Date.now());
+      const branchToSetup = {
+        type: "create",
+        branchName: "test-create-branch",
+        branchSetupDateTime: currentDateTime,
+        branchOwner: "joebloggs",
+      };
+
+      const res = await request(app)
+        .post("/api/branches?type=create")
+        .send(branchToSetup)
+        .expect(201);
+
+      expect(res.body.branch.branchSetupDateTime).toBe(currentDateTime);
+      expect(res.body.branch).toHaveProperty("_id");
+      expect(res.body.branch).toMatchObject({
+        type: "create",
+        branchName: "test-create-branch",
+        branchSetupDateTime: currentDateTime,
+        branchOwner: "joebloggs",
+        branchAllowedUsers: [],
+        branchLockedForApproval: false,
+        comments: [],
+        guideline: {
+          GuidanceNumber: "AA00",
+          GuidanceSlug: "template-guideline-slug-to-edit",
+          GuidanceType: "Clinical guideline",
+          LongTitle: "Long Title To Edit",
+          NHSEvidenceAccredited: false,
+          InformationStandardAccredited: false,
+          Chapters: [
+            {
+              ChapterId: "title-1",
+              Title: "Title 1",
+              Content: "Content To Edit",
+              Sections: [
+                {
+                  SectionId: "section-1-1",
+                  Title: "Section 1.1",
+                  Content: "Content To Edit",
+                },
+                {
+                  SectionId: "section-1-2",
+                  Title: "Section 1.2",
+                  Content: "Content To Edit",
+                },
+                {
+                  SectionId: "section-1-3",
+                  Title: "Section 1.3",
+                  Content: "Content To Edit",
+                },
+              ],
+            },
+            {
+              ChapterId: "title-2",
+              Title: "Title 2",
+              Content: "Content To Edit",
+              Sections: [
+                {
+                  SectionId: "section-2-1",
+                  Title: "Section 2.1",
+                  Content: "Content To Edit",
+                },
+                {
+                  SectionId: "section-2-2",
+                  Title: "Section 2.2",
+                  Content: "Content To Edit",
+                },
+                {
+                  SectionId: "section-2-3",
+                  Title: "Section 2.3",
+                  Content: "Content To Edit",
+                },
+              ],
+            },
+            {
+              ChapterId: "title-3",
+              Title: "Title 3",
+              Content: "Content To Edit",
+              Sections: [
+                {
+                  SectionId: "section-3-1",
+                  Title: "Section 3.1",
+                  Content: "Content To Edit",
+                },
+                {
+                  SectionId: "section-3-2",
+                  Title: "Section 3.2",
+                  Content: "Content To Edit",
+                },
+                {
+                  SectionId: "section-3-3",
+                  Title: "Section 3.3",
+                  Content: "Content To Edit",
+                },
+              ],
+            },
+          ],
+          LastModified: "",
+          Uri: "URL To Edit",
+          Title: "Short Title To Edit",
+        },
+      });
+    });
   });
   describe("/api/branches GET Requests", () => {
     test("Status 200: Should respond with all branches for GET request to /api/branches", async () => {
       const res = await request(app).get("/api/branches").expect(200);
       expect(res.body.branches).toBeInstanceOf(Array);
-      expect(res.body.branches).toHaveLength(1);
+      expect(res.body.branches).toHaveLength(2);
       res.body.branches.forEach((branch) => {
         expect(branch).toMatchObject({
           _id: expect.any(String),

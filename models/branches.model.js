@@ -22,6 +22,96 @@ exports.createNewEditBranch = async (body) => {
   return await branchSchema.create(body);
 };
 
+exports.createNewCreateBranch = async (body) => {
+  if (Object.keys(body).length === 0) {
+    return Promise.reject({ status: 400, msg: "Bad Request" });
+  }
+
+  const guidelineTemplate = {
+    GuidanceNumber: "AA00",
+    GuidanceSlug: "template-guideline-slug-to-edit",
+    GuidanceType: "Clinical guideline",
+    LongTitle: "Long Title To Edit",
+    NHSEvidenceAccredited: false,
+    InformationStandardAccredited: false,
+    Chapters: [
+      {
+        ChapterId: "title-1",
+        Title: "Title 1",
+        Content: "Content To Edit",
+        Sections: [
+          {
+            SectionId: "section-1-1",
+            Title: "Section 1.1",
+            Content: "Content To Edit",
+          },
+          {
+            SectionId: "section-1-2",
+            Title: "Section 1.2",
+            Content: "Content To Edit",
+          },
+          {
+            SectionId: "section-1-3",
+            Title: "Section 1.3",
+            Content: "Content To Edit",
+          },
+        ],
+      },
+      {
+        ChapterId: "title-2",
+        Title: "Title 2",
+        Content: "Content To Edit",
+        Sections: [
+          {
+            SectionId: "section-2-1",
+            Title: "Section 2.1",
+            Content: "Content To Edit",
+          },
+          {
+            SectionId: "section-2-2",
+            Title: "Section 2.2",
+            Content: "Content To Edit",
+          },
+          {
+            SectionId: "section-2-3",
+            Title: "Section 2.3",
+            Content: "Content To Edit",
+          },
+        ],
+      },
+      {
+        ChapterId: "title-3",
+        Title: "Title 3",
+        Content: "Content To Edit",
+        Sections: [
+          {
+            SectionId: "section-3-1",
+            Title: "Section 3.1",
+            Content: "Content To Edit",
+          },
+          {
+            SectionId: "section-3-2",
+            Title: "Section 3.2",
+            Content: "Content To Edit",
+          },
+          {
+            SectionId: "section-3-3",
+            Title: "Section 3.3",
+            Content: "Content To Edit",
+          },
+        ],
+      },
+    ],
+    LastModified: "",
+    Uri: "URL To Edit",
+    Title: "Short Title To Edit",
+  };
+
+  body.guideline = guidelineTemplate;
+
+  return await branchSchema.create(body);
+};
+
 exports.updateBranchByBranchName = async (
   branch_name,
   chapterNum,
