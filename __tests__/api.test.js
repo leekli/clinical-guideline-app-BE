@@ -597,7 +597,7 @@ describe("/api/branches Test Requests", () => {
     });
   });
   describe("/api/branches PATCH Requests", () => {
-    test("Status 200: Should respond with updated branch information with a status 200 when a successful PATCH request is made to /api/branches/:branch_name", async () => {
+    test("Status 200: Should respond with updated branch information with a status 200 when a successful PATCH request is made to /api/branches/:branch_name and only the 'content' property changed", async () => {
       const chapterNum = 0;
       const sectionNum = 0;
 
@@ -628,6 +628,31 @@ describe("/api/branches Test Requests", () => {
         res.body.branch.guideline.Chapters[chapterNum].Sections[sectionNum]
           .Content
       ).toEqual(expected);
+    });
+    test("Status 200: Should respond with updated branch information with a status 200 when a successful PATCH request is made to /api/branches/:branch_name and only the 'Section Title' property changed", async () => {
+      const chapterNum = 0;
+      const sectionNum = 0;
+
+      const patchBody = {
+        SectionId: "changed-section-title",
+        Title: "Changed Section Title",
+        Content:
+          '<div class="section" title="Who is it for?" id="ng232_who-is-it-for" xmlns="http://www.w3.org/1999/xhtml">\r\n  <h3 class="title">\r\n    <a id="who-is-it-for"></a>Who is it for?</h3>\r\n  <div class="itemizedlist">\r\n    <ul class="itemizedlist">\r\n      <li class="listitem">\r\n        <p>Healthcare professionals</p>\r\n      </li>\r\n      <li class="listitem">\r\n        <p>People with a head injury, their families and carers</p>\r\n      </li>\r\n      <li class="listitem">\r\n        <p>Commissioners and providers YYY XXX ZZZ</p>\r\n      </li>\r\n    </ul>\r\n  </div>\r\n</div>',
+      };
+
+      const res = await request(app)
+        .patch("/api/branches/test-edit-branch")
+        .send({ chapterNum, sectionNum, patchBody })
+        .expect(200);
+
+      expect(
+        res.body.branch.guideline.Chapters[chapterNum].Sections[sectionNum]
+          .SectionId
+      ).toBe("changed-section-title");
+      expect(
+        res.body.branch.guideline.Chapters[chapterNum].Sections[sectionNum]
+          .Title
+      ).toBe("Changed Section Title");
     });
     test("Status 200: Should update the branchLastModified property with the latest date once a successful PATCH request on /api/branches/:branch_name is complete", async () => {
       const chapterNum = 0;
