@@ -4,3 +4,5 @@ data/test-data/
 .env
 .env.*
 .DS_Store
+json-test.json
+testJSON.js
