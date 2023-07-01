@@ -176,67 +176,63 @@ describe("Full Integration test", () => {
     const chapterNum = 1;
     const sectionNum = 2;
 
-    const patchBody = {
-      SectionId: "13-factors-influencing-management-decisions",
-      Title: "1.3 Factors influencing management decisions",
-      Content:
-        '<div class="section" title="1.3 Factors influencing management decisions" id="cg104_1.3-factors-influencing-management-decisions" xmlns="http://www.w3.org/1999/xhtml">\r\n' +
-        '  <h3 class="title">\r\n' +
-        '    <a id="factors-influencing-management-decisions"></a>1.3 Factors influencing management decisions</h3>\r\n' +
-        '  <div class="section" title="1.3.1 When to stop investigations" id="cg104_1.3.1-when-to-stop-investigations">\r\n' +
-        '    <h4 class="title">\r\n' +
-        '      <a id="when-to-stop-investigations"></a>1.3.1 When to stop investigations</h4>\r\n' +
-        '    <div id="cg104_1_3_1_1" class="recommendation_text">\r\n' +
-        '      <p class="numbered-paragraph">\r\n' +
-        '        <span class="paragraph-number">1.3.1.1 </span>Do not offer further investigations to identify the primary site of origin of the malignancy to patients who are unfit for treatment.</p>\r\n' +
-        "    </div>\r\n" +
-        '    <div id="cg104_1_3_1_2" class="recommendation_text">\r\n' +
-        '      <p class="numbered-paragraph">\r\n' +
-        '        <span class="paragraph-number">1.3.1.2 </span>Perform investigations only if:</p>\r\n' +
-        '      <div class="itemizedlist indented">\r\n' +
-        '        <ul class="itemizedlist">\r\n' +
-        '          <li class="listitem">\r\n' +
-        "            <p>the results are likely to affect a treatment decision</p>\r\n" +
-        "          </li>\r\n" +
-        '          <li class="listitem">\r\n' +
-        "            <p>the patient understands why the investigations are being carried out </p>\r\n" +
-        "          </li>\r\n" +
-        '          <li class="listitem">\r\n' +
-        "            <p>the patient understands the potential benefits and risks of investigation and treatment <strong>and</strong></p>\r\n" +
-        "          </li>\r\n" +
-        '          <li class="listitem">\r\n' +
-        "            <p>the patient is prepared to accept treatment.</p>\r\n" +
-        "          </li>\r\n" +
-        "        </ul>\r\n" +
-        "      </div>\r\n" +
-        "    </div>\r\n" +
-        '    <div id="cg104_1_3_1_3" class="recommendation_text">\r\n' +
-        '      <p class="numbered-paragraph">\r\n' +
-        '        <span class="paragraph-number">1.3.1.3 </span>THIS IS A RANDOMLY EDITED SECTION OF THE GUIDELINE</p>\r\n' +
-        "    </div>\r\n" +
-        "  </div>\r\n" +
-        '  <div class="section" title="1.3.2 Selecting optimal treatment" id="cg104_1.3.2-selecting-optimal-treatment">\r\n' +
-        '    <h4 class="title">\r\n' +
-        '      <a id="selecting-optimal-treatment"></a>1.3.2 Selecting optimal treatment</h4>\r\n' +
-        '    <div id="cg104_1_3_2_1" class="recommendation_text">\r\n' +
-        '      <p class="numbered-paragraph">\r\n' +
-        '        <span class="paragraph-number">1.3.2.1 </span>THIS IS ANOTHER SECTION OF THE GUIDELINE EDITIED</p>\r\n' +
-        "    </div>\r\n" +
-        '    <div id="cg104_1_3_2_2" class="recommendation_text">\r\n' +
-        '      <p class="numbered-paragraph">\r\n' +
-        `        <span class="paragraph-number">1.3.2.2 </span>Discuss the patient's prognostic factors with the patient and their relatives or carers, if appropriate, to help them make informed decisions about treatment.</p>\r\n` +
-        "    </div>\r\n" +
-        '    <div id="cg104_1_3_2_3" class="recommendation_text">\r\n' +
-        '      <p class="numbered-paragraph">\r\n' +
-        `        <span class="paragraph-number">1.3.2.3 </span>Include the patient's prognostic factors in decision aids and other information for patients and their relatives or carers about treatment options.</p>\r\n` +
-        "    </div>\r\n" +
-        '    <div id="cg104_1_3_2_4" class="recommendation_text">\r\n' +
-        '      <p class="numbered-paragraph">\r\n' +
-        '        <span class="paragraph-number">1.3.2.4 </span>This recommendation has been withdrawn.</p>\r\n' +
-        "    </div>\r\n" +
-        "  </div>\r\n" +
-        "</div>",
-    };
+    const patchBody =
+      '<div class="section" title="1.3 Factors influencing management decisions" id="cg104_1.3-factors-influencing-management-decisions" xmlns="http://www.w3.org/1999/xhtml">\r\n' +
+      '  <h3 class="title">\r\n' +
+      '    <a id="factors-influencing-management-decisions"></a>1.3 Factors influencing management decisions</h3>\r\n' +
+      '  <div class="section" title="1.3.1 When to stop investigations" id="cg104_1.3.1-when-to-stop-investigations">\r\n' +
+      '    <h4 class="title">\r\n' +
+      '      <a id="when-to-stop-investigations"></a>1.3.1 When to stop investigations</h4>\r\n' +
+      '    <div id="cg104_1_3_1_1" class="recommendation_text">\r\n' +
+      '      <p class="numbered-paragraph">\r\n' +
+      '        <span class="paragraph-number">1.3.1.1 </span>Do not offer further investigations to identify the primary site of origin of the malignancy to patients who are unfit for treatment.</p>\r\n' +
+      "    </div>\r\n" +
+      '    <div id="cg104_1_3_1_2" class="recommendation_text">\r\n' +
+      '      <p class="numbered-paragraph">\r\n' +
+      '        <span class="paragraph-number">1.3.1.2 </span>Perform investigations only if:</p>\r\n' +
+      '      <div class="itemizedlist indented">\r\n' +
+      '        <ul class="itemizedlist">\r\n' +
+      '          <li class="listitem">\r\n' +
+      "            <p>the results are likely to affect a treatment decision</p>\r\n" +
+      "          </li>\r\n" +
+      '          <li class="listitem">\r\n' +
+      "            <p>the patient understands why the investigations are being carried out </p>\r\n" +
+      "          </li>\r\n" +
+      '          <li class="listitem">\r\n' +
+      "            <p>the patient understands the potential benefits and risks of investigation and treatment <strong>and</strong></p>\r\n" +
+      "          </li>\r\n" +
+      '          <li class="listitem">\r\n' +
+      "            <p>the patient is prepared to accept treatment.</p>\r\n" +
+      "          </li>\r\n" +
+      "        </ul>\r\n" +
+      "      </div>\r\n" +
+      "    </div>\r\n" +
+      '    <div id="cg104_1_3_1_3" class="recommendation_text">\r\n' +
+      '      <p class="numbered-paragraph">\r\n' +
+      '        <span class="paragraph-number">1.3.1.3 </span>THIS IS A RANDOMLY EDITED SECTION OF THE GUIDELINE</p>\r\n' +
+      "    </div>\r\n" +
+      "  </div>\r\n" +
+      '  <div class="section" title="1.3.2 Selecting optimal treatment" id="cg104_1.3.2-selecting-optimal-treatment">\r\n' +
+      '    <h4 class="title">\r\n' +
+      '      <a id="selecting-optimal-treatment"></a>1.3.2 Selecting optimal treatment</h4>\r\n' +
+      '    <div id="cg104_1_3_2_1" class="recommendation_text">\r\n' +
+      '      <p class="numbered-paragraph">\r\n' +
+      '        <span class="paragraph-number">1.3.2.1 </span>THIS IS ANOTHER SECTION OF THE GUIDELINE EDITIED</p>\r\n' +
+      "    </div>\r\n" +
+      '    <div id="cg104_1_3_2_2" class="recommendation_text">\r\n' +
+      '      <p class="numbered-paragraph">\r\n' +
+      `        <span class="paragraph-number">1.3.2.2 </span>Discuss the patient's prognostic factors with the patient and their relatives or carers, if appropriate, to help them make informed decisions about treatment.</p>\r\n` +
+      "    </div>\r\n" +
+      '    <div id="cg104_1_3_2_3" class="recommendation_text">\r\n' +
+      '      <p class="numbered-paragraph">\r\n' +
+      `        <span class="paragraph-number">1.3.2.3 </span>Include the patient's prognostic factors in decision aids and other information for patients and their relatives or carers about treatment options.</p>\r\n` +
+      "    </div>\r\n" +
+      '    <div id="cg104_1_3_2_4" class="recommendation_text">\r\n' +
+      '      <p class="numbered-paragraph">\r\n' +
+      '        <span class="paragraph-number">1.3.2.4 </span>This recommendation has been withdrawn.</p>\r\n' +
+      "    </div>\r\n" +
+      "  </div>\r\n" +
+      "</div>";
 
     const expected =
       '<div class="section" title="1.3 Factors influencing management decisions" id="cg104_1.3-factors-influencing-management-decisions" xmlns="http://www.w3.org/1999/xhtml">\r\n' +
