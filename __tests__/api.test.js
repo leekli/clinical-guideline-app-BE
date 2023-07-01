@@ -702,7 +702,7 @@ describe("/api/branches Test Requests", () => {
     });
   });
   describe("/api/branches PATCH Requests", () => {
-    test("Status 200: Should respond with updated branch information with a status 200 when a successful PATCH request is made to /api/branches/:branch_name and only the 'content' property changed", async () => {
+    test("Status 200: Should respond with updated branch information with a status 200 when a successful PATCH request is made to /api/branches/:branch_name and only the 'content' property changed on a section within a chapter", async () => {
       const chapterNum = 0;
       const sectionNum = 0;
 
@@ -729,6 +729,31 @@ describe("/api/branches Test Requests", () => {
         res.body.branch.guideline.Chapters[chapterNum].Sections[sectionNum]
           .Content
       ).toEqual(expected);
+    });
+    test("Status 200: Should respond with updated branch information with a status 200 when a successful PATCH request is made to /api/branches/:branch_name and only the 'content' property changed on a chapter (ignores section, uses '999' as the signifier to ignore sectionNum)", async () => {
+      const chapterNum = 0;
+      const sectionNum = 999;
+
+      const patchBody =
+        '<div class="chapter" title="Overview" id="ng232_overview" xmlns="http://www.w3.org/1999/xhtml">\r\n  <h2 class="title">\r\n    <a id="overview"></a>Overview EDITED!</h2>\r\n  <p>XXX.</p>\r\n  <p>See <a class="link" href="https://www.nice.org.uk/guidance/ng40" target="_top" data-original-url="https://www.nice.org.uk/guidance/ng40">XXX.</p>\r\n</div>';
+
+      const expected =
+        '<div class="chapter" title="Overview" id="ng232_overview" xmlns="http://www.w3.org/1999/xhtml">\r\n  <h2 class="title">\r\n    <a id="overview"></a>Overview EDITED!</h2>\r\n  <p>XXX.</p>\r\n  <p>See <a class="link" href="https://www.nice.org.uk/guidance/ng40" target="_top" data-original-url="https://www.nice.org.uk/guidance/ng40">XXX.</p>\r\n</div>';
+
+      const res = await request(app)
+        .patch("/api/branches/test-edit-branch")
+        .send({ chapterNum, sectionNum, patchBody })
+        .expect(200);
+
+      expect(res.body.branch.guideline.Chapters[chapterNum].ChapterId).toBe(
+        "overview"
+      );
+      expect(res.body.branch.guideline.Chapters[chapterNum].Title).toBe(
+        "Overview"
+      );
+      expect(res.body.branch.guideline.Chapters[chapterNum].Content).toEqual(
+        expected
+      );
     });
     test("Status 200: Should update the branchLastModified property with the latest date once a successful PATCH request on /api/branches/:branch_name is complete", async () => {
       const chapterNum = 0;
