@@ -135,7 +135,7 @@ exports.updateBranchByBranchName = async (
   } else {
     branch.branchLastModified = Date.now();
 
-    if (sectionNum === "No Section") {
+    if (sectionNum === 999) {
       branch.guideline.Chapters[chapterNum].Content = patchBody;
     } else {
       branch.guideline.Chapters[chapterNum].Sections[sectionNum].Content =
