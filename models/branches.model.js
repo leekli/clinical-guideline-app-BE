@@ -134,7 +134,8 @@ exports.updateBranchByBranchName = async (
     return Promise.reject({ status: 404, msg: "Branch not found" });
   } else {
     branch.branchLastModified = Date.now();
-    branch.guideline.Chapters[chapterNum].Sections[sectionNum] = patchBody;
+    branch.guideline.Chapters[chapterNum].Sections[sectionNum].Content =
+      patchBody;
 
     await branchSchema.updateOne(
       {
