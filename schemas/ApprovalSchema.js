@@ -17,6 +17,10 @@ const approvalSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  branchName: {
+    type: String,
+    required: true,
+  },
   branchOwner: {
     type: String,
     required: true,

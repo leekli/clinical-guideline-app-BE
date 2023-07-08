@@ -1245,6 +1245,7 @@ describe("/api/approvals Test Requests", () => {
         approvalSetupDateTime: currentDateTime,
         approvalPurposeDescription:
           "A number of edits have been made to Chapter 1 Section 1 to streamline the text",
+        branchName: "test-branch-name",
         branchOwner: "joebloggs",
         guideline: {
           GuidanceNumber: "AB01",
@@ -1289,6 +1290,7 @@ describe("/api/approvals Test Requests", () => {
         approvalPurposeDescription:
           "A number of edits have been made to Chapter 1 Section 1 to streamline the text",
         branchOwner: "joebloggs",
+        branchName: "test-branch-name",
         guideline: {
           GuidanceNumber: "AB01",
           GuidanceSlug: "test-guideline-slug",
@@ -1331,6 +1333,7 @@ describe("/api/approvals Test Requests", () => {
         approvalPurposeDescription:
           "A number of edits have been made to Chapter 1 Section 1 to streamline the text",
         branchOwner: "joebloggs",
+        branchName: "test-branch-name",
         guideline: {
           GuidanceNumber: "AB01",
           GuidanceSlug: "test-guideline-slug",
@@ -1373,6 +1376,7 @@ describe("/api/approvals Test Requests", () => {
           approvalRequestName: expect.any(String),
           approvalSetupDateTime: expect.any(String),
           approvalPurposeDescription: expect.any(String),
+          branchName: expect.any(String),
           branchOwner: expect.any(String),
           guideline: {
             GuidanceNumber: expect.any(String),
