@@ -531,6 +531,8 @@ describe("/api/branches Test Requests", () => {
         branchName: "test-create-branch",
         branchSetupDateTime: currentDateTime,
         branchOwner: "joebloggs",
+        guidelineTitle: "Disease A",
+        guidelineNumberProposed: "DA1",
       };
 
       const res = await request(app)
@@ -549,10 +551,10 @@ describe("/api/branches Test Requests", () => {
         branchLockedForApproval: false,
         comments: [],
         guideline: {
-          GuidanceNumber: "AA00",
-          GuidanceSlug: "template-guideline-slug-to-edit",
+          GuidanceNumber: branchToSetup.guidelineNumberProposed,
+          GuidanceSlug: "disease-a",
           GuidanceType: "Clinical guideline",
-          LongTitle: "Long Title To Edit",
+          LongTitle: `${branchToSetup.guidelineTitle} (${branchToSetup.guidelineNumberProposed})`,
           NHSEvidenceAccredited: false,
           InformationStandardAccredited: false,
           Chapters: [
@@ -564,16 +566,6 @@ describe("/api/branches Test Requests", () => {
                 {
                   SectionId: "section-1-1",
                   Title: "Section 1.1",
-                  Content: "Content To Edit",
-                },
-                {
-                  SectionId: "section-1-2",
-                  Title: "Section 1.2",
-                  Content: "Content To Edit",
-                },
-                {
-                  SectionId: "section-1-3",
-                  Title: "Section 1.3",
                   Content: "Content To Edit",
                 },
               ],
@@ -588,16 +580,6 @@ describe("/api/branches Test Requests", () => {
                   Title: "Section 2.1",
                   Content: "Content To Edit",
                 },
-                {
-                  SectionId: "section-2-2",
-                  Title: "Section 2.2",
-                  Content: "Content To Edit",
-                },
-                {
-                  SectionId: "section-2-3",
-                  Title: "Section 2.3",
-                  Content: "Content To Edit",
-                },
               ],
             },
             {
@@ -610,22 +592,12 @@ describe("/api/branches Test Requests", () => {
                   Title: "Section 3.1",
                   Content: "Content To Edit",
                 },
-                {
-                  SectionId: "section-3-2",
-                  Title: "Section 3.2",
-                  Content: "Content To Edit",
-                },
-                {
-                  SectionId: "section-3-3",
-                  Title: "Section 3.3",
-                  Content: "Content To Edit",
-                },
               ],
             },
           ],
           LastModified: "",
           Uri: "URL To Edit",
-          Title: "Short Title To Edit",
+          Title: branchToSetup.guidelineTitle,
         },
       });
     });

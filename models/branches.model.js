@@ -27,11 +27,16 @@ exports.createNewCreateBranch = async (body) => {
     return Promise.reject({ status: 400, msg: "Bad Request" });
   }
 
+  const guidelineSlugFormatting = body.guidelineTitle
+    .split(" ")
+    .map((char) => char.toLowerCase())
+    .join("-");
+
   const guidelineTemplate = {
-    GuidanceNumber: "AA00",
-    GuidanceSlug: "template-guideline-slug-to-edit",
+    GuidanceNumber: body.guidelineNumberProposed,
+    GuidanceSlug: guidelineSlugFormatting,
     GuidanceType: "Clinical guideline",
-    LongTitle: "Long Title To Edit",
+    LongTitle: `${body.guidelineTitle} (${body.guidelineNumberProposed})`,
     NHSEvidenceAccredited: false,
     InformationStandardAccredited: false,
     Chapters: [
@@ -43,16 +48,6 @@ exports.createNewCreateBranch = async (body) => {
           {
             SectionId: "section-1-1",
             Title: "Section 1.1",
-            Content: "Content To Edit",
-          },
-          {
-            SectionId: "section-1-2",
-            Title: "Section 1.2",
-            Content: "Content To Edit",
-          },
-          {
-            SectionId: "section-1-3",
-            Title: "Section 1.3",
             Content: "Content To Edit",
           },
         ],
@@ -67,16 +62,6 @@ exports.createNewCreateBranch = async (body) => {
             Title: "Section 2.1",
             Content: "Content To Edit",
           },
-          {
-            SectionId: "section-2-2",
-            Title: "Section 2.2",
-            Content: "Content To Edit",
-          },
-          {
-            SectionId: "section-2-3",
-            Title: "Section 2.3",
-            Content: "Content To Edit",
-          },
         ],
       },
       {
@@ -89,22 +74,12 @@ exports.createNewCreateBranch = async (body) => {
             Title: "Section 3.1",
             Content: "Content To Edit",
           },
-          {
-            SectionId: "section-3-2",
-            Title: "Section 3.2",
-            Content: "Content To Edit",
-          },
-          {
-            SectionId: "section-3-3",
-            Title: "Section 3.3",
-            Content: "Content To Edit",
-          },
         ],
       },
     ],
     LastModified: "",
     Uri: "URL To Edit",
-    Title: "Short Title To Edit",
+    Title: body.guidelineTitle,
   };
 
   body.guideline = guidelineTemplate;
