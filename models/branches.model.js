@@ -183,6 +183,33 @@ exports.updateBranchByBranchName = async (
   }
 };
 
+exports.updateOneBranchWithNewSectionByChapterNum = async (
+  branch_name,
+  chapterNum
+) => {
+  const branch = await branchSchema.findOne({
+    branchName: branch_name,
+  });
+
+  const newSection = {
+    SectionId: "section-title",
+    Title: "Section Title",
+    Content:
+      '<div class="section" title="Section Title" xmlns="http://www.w3.org/1999/xhtml">\r\n  <h3 class="title">\r\n    Title to edit</h3>\r\n <p>Content to edit.</p>\r\n</div>',
+  };
+
+  branch.guideline.Chapters[chapterNum].Sections.push(newSection);
+
+  await branchSchema.updateOne(
+    {
+      branchName: branch_name,
+    },
+    branch
+  );
+
+  return branch;
+};
+
 exports.deleteOneBranchByBranchName = async (branch_name) => {
   const branch = await branchSchema.find({
     branchName: branch_name,

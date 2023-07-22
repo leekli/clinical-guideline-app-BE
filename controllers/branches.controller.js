@@ -10,6 +10,7 @@ const {
   updateOneBranchWithNewComment,
   findAllBranchComments,
   createNewCreateBranch,
+  updateOneBranchWithNewSectionByChapterNum,
 } = require("../models/branches.model");
 
 exports.getBranches = async (req, res, next) => {
@@ -99,6 +100,22 @@ exports.patchBranchWithNewAllowedUsers = async (req, res, next) => {
     const branch = await updateOneBranchWithNewAllowedUser(
       branch_name,
       userToAdd
+    );
+
+    res.status(200).send({ branch });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.patchBranchWithNewSectionByChapterNum = async (req, res, next) => {
+  try {
+    const { branch_name } = req.params;
+    const { chapterNum } = req.body;
+
+    const branch = await updateOneBranchWithNewSectionByChapterNum(
+      branch_name,
+      chapterNum
     );
 
     res.status(200).send({ branch });

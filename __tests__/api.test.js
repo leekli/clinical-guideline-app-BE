@@ -850,6 +850,33 @@ describe("/api/branches Test Requests", () => {
 
       expect(res.body.branch.branchLockedForApproval).toBe(false);
     });
+    test("Status 200: Should add a new section to an existing chapter when the endpoint is invoked using the passed in section title from the user", async () => {
+      const chapterNum = 0;
+
+      const expectedSectionContent =
+        '<div class="section" title="Section Title" xmlns="http://www.w3.org/1999/xhtml">\r\n  <h3 class="title">\r\n    Title to edit</h3>\r\n <p>Content to edit.</p>\r\n</div>';
+
+      const res = await request(app)
+        .patch("/api/branches/test-edit-branch/addsection")
+        .send({ chapterNum })
+        .expect(200);
+
+      expect(
+        res.body.branch.guideline.Chapters[chapterNum].Sections[
+          res.body.branch.guideline.Chapters[chapterNum].Sections.length - 1
+        ].SectionId
+      ).toBe("section-title");
+      expect(
+        res.body.branch.guideline.Chapters[chapterNum].Sections[
+          res.body.branch.guideline.Chapters[chapterNum].Sections.length - 1
+        ].Title
+      ).toBe("Section Title");
+      expect(
+        res.body.branch.guideline.Chapters[chapterNum].Sections[
+          res.body.branch.guideline.Chapters[chapterNum].Sections.length - 1
+        ].Content
+      ).toBe(expectedSectionContent);
+    });
   });
   describe("/api/branches/:branch_name/comments Requests", () => {
     describe("/api/branches/:branch_name/comments POST Requests", () => {
