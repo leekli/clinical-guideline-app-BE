@@ -37,6 +37,24 @@ exports.createNewCreateBranch = async (body) => {
     GuidanceSlug: guidelineSlugFormatting,
     GuidanceType: "Clinical guideline",
     LongTitle: `${body.guidelineTitle} (${body.guidelineNumberProposed})`,
+    MetadataApplicationProfile: {
+      AlternativeTitle: null,
+      Audiences: [],
+      Creator: "NICE",
+      Description: null,
+      Identifier: "",
+      Language: null,
+      Modified: String(Date.now()),
+      Issued: String(Date.now()),
+      Publisher: "NICE",
+      Title: body.guidelineTitle,
+      Types: [],
+      Subjects: [],
+      Contributors: [],
+      Source: "NICE",
+      ParentSection: null,
+      Breadcrumb: null,
+    },
     NHSEvidenceAccredited: false,
     InformationStandardAccredited: false,
     Chapters: [
@@ -86,6 +104,7 @@ exports.createNewCreateBranch = async (body) => {
     LastModified: "",
     Uri: "URL To Edit",
     Title: body.guidelineTitle,
+    TitleContent: null,
   };
 
   body.guideline = guidelineTemplate;
