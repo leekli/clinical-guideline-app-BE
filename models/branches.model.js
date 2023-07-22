@@ -116,7 +116,8 @@ exports.updateBranchByBranchName = async (
   branch_name,
   chapterNum,
   sectionNum,
-  patchBody
+  patchBody,
+  newTitle
 ) => {
   if (Object.keys(patchBody).length === 0) {
     return Promise.reject({ status: 400, msg: "Bad Request" });
@@ -136,10 +137,39 @@ exports.updateBranchByBranchName = async (
     branch.branchLastModified = Date.now();
 
     if (sectionNum === 999) {
+      const newChapterTitleToSet =
+        newTitle || branch.guideline.Chapters[chapterNum].Title;
+
+      const newChpaterIdToSet = newChapterTitleToSet
+        .split(" ")
+        .map((char) => {
+          const replacedChar = char.replace(/[^a-zA-Z0-9]/g, "");
+          return replacedChar.toLowerCase();
+        })
+        .join("-");
+
       branch.guideline.Chapters[chapterNum].Content = patchBody;
+      branch.guideline.Chapters[chapterNum].Title = newChapterTitleToSet;
+      branch.guideline.Chapters[chapterNum].ChapterId = newChpaterIdToSet;
     } else {
+      const newSectionTitleToSet =
+        newTitle ||
+        branch.guideline.Chapters[chapterNum].Sections[sectionNum].Title;
+
+      const newSectionIdToSet = newSectionTitleToSet
+        .split(" ")
+        .map((char) => {
+          const replacedChar = char.replace(/[^a-zA-Z0-9]/g, "");
+          return replacedChar.toLowerCase();
+        })
+        .join("-");
+
       branch.guideline.Chapters[chapterNum].Sections[sectionNum].Content =
         patchBody;
+      branch.guideline.Chapters[chapterNum].Sections[sectionNum].Title =
+        newSectionTitleToSet;
+      branch.guideline.Chapters[chapterNum].Sections[sectionNum].SectionId =
+        newSectionIdToSet;
     }
 
     await branchSchema.updateOne(

@@ -733,6 +733,27 @@ describe("/api/branches Test Requests", () => {
         expected
       );
     });
+    test("Status 200: Should update the Chapter Title and ChapterId for the current chapter being edited", async () => {
+      const chapterNum = 0;
+      const sectionNum = 999;
+
+      const newTitle = "Overview Change Test";
+
+      const patchBody =
+        '<div class="chapter" title="Overview" id="xo723_overview" xmlns="http://www.w3.org/1999/xhtml">\r\n  <h2 class="title">\r\n    <a id="overview"></a>Overview</h2>\r\n  <p>This is a test paragraph</p>\r\n</div>';
+
+      const res = await request(app)
+        .patch("/api/branches/test-edit-branch")
+        .send({ chapterNum, sectionNum, patchBody, newTitle })
+        .expect(200);
+
+      expect(res.body.branch.guideline.Chapters[chapterNum].ChapterId).toBe(
+        "overview-change-test"
+      );
+      expect(res.body.branch.guideline.Chapters[chapterNum].Title).toBe(
+        "Overview Change Test"
+      );
+    });
     test("Status 200: Should update the branchLastModified property with the latest date once a successful PATCH request on /api/branches/:branch_name is complete", async () => {
       const chapterNum = 0;
       const sectionNum = 0;
@@ -760,6 +781,29 @@ describe("/api/branches Test Requests", () => {
       expect(
         String(new Date(Number(res.body.branch.branchLastModified)))
       ).toContain(currentHour);
+    });
+    test("Status 200: Should update the Section Title and ChapterId for the current chapter being edited", async () => {
+      const chapterNum = 0;
+      const sectionNum = 0;
+
+      const newTitle = "Who is it for test?";
+
+      const patchBody =
+        '<div class="section" title="Who is it for?" id="ng232_who-is-it-for" xmlns="http://www.w3.org/1999/xhtml">\r\n  <h3 class="title">\r\n    <a id="who-is-it-for"></a>Who is it for?</h3>\r\n  <div class="itemizedlist">\r\n    <ul class="itemizedlist">\r\n      <li class="listitem">\r\n        <p>Healthcare professionals</p>\r\n      </li>\r\n      <li class="listitem">\r\n        <p>People with a head injury, their families and carers</p>\r\n      </li>\r\n      <li class="listitem">\r\n        <p>Commissioners and providers</p>\r\n      </li>\r\n    </ul>\r\n  </div>\r\n</div>"';
+
+      const res = await request(app)
+        .patch("/api/branches/test-edit-branch")
+        .send({ chapterNum, sectionNum, patchBody, newTitle })
+        .expect(200);
+
+      expect(
+        res.body.branch.guideline.Chapters[chapterNum].Sections[sectionNum]
+          .SectionId
+      ).toBe("who-is-it-for-test");
+      expect(
+        res.body.branch.guideline.Chapters[chapterNum].Sections[sectionNum]
+          .Title
+      ).toBe("Who is it for test?");
     });
     test("Status 200: Should respond with the updated branch when a new user is added to the branchAllowedUsers array on /api/branches/:branch_name/addusers", async () => {
       const userToAdd = "janedoe";

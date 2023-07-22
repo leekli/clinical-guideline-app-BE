@@ -59,13 +59,14 @@ exports.postBranch = async (req, res, next) => {
 exports.patchBranchByBranchName = async (req, res, next) => {
   try {
     const { branch_name } = req.params;
-    const { chapterNum, sectionNum, patchBody } = req.body;
+    const { chapterNum, sectionNum, patchBody, newTitle } = req.body;
 
     const branch = await updateBranchByBranchName(
       branch_name,
       chapterNum,
       sectionNum,
-      patchBody
+      patchBody,
+      newTitle
     );
 
     res.status(200).send({ branch });
