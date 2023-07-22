@@ -559,38 +559,44 @@ describe("/api/branches Test Requests", () => {
           InformationStandardAccredited: false,
           Chapters: [
             {
-              ChapterId: "title-1",
-              Title: "Title 1",
-              Content: "Content To Edit",
+              ChapterId: "overview",
+              Title: "Overview",
+              Content:
+                '<div class="chapter" title="Overview" xmlns="http://www.w3.org/1999/xhtml">\r\n  <h2 class="title">\r\n    Overview</h2>\r\n  <p>Content to edit.</p>\r\n</div>',
               Sections: [
                 {
-                  SectionId: "section-1-1",
-                  Title: "Section 1.1",
-                  Content: "Content To Edit",
+                  SectionId: "section-1-title",
+                  Title: "Section 1 Title",
+                  Content:
+                    '<div class="section" title="Section 1 Title" xmlns="http://www.w3.org/1999/xhtml">\r\n  <h3 class="title">\r\n    Title to edit</h3>\r\n <p>Content to edit.</p>\r\n</div>',
                 },
               ],
             },
             {
-              ChapterId: "title-2",
-              Title: "Title 2",
-              Content: "Content To Edit",
+              ChapterId: "chapter-2-title",
+              Title: "Chapter 2 Title",
+              Content:
+                '<div class="chapter" title="Chapter 2 Title" xmlns="http://www.w3.org/1999/xhtml">\r\n  <h2 class="title">\r\n    Title to edit</h2>\r\n  <p>Content to edit.</p>\r\n</div>',
               Sections: [
                 {
-                  SectionId: "section-2-1",
-                  Title: "Section 2.1",
-                  Content: "Content To Edit",
+                  SectionId: "section-1-title",
+                  Title: "Section 1 Title",
+                  Content:
+                    '<div class="section" title="Section 1 Title" xmlns="http://www.w3.org/1999/xhtml">\r\n  <h3 class="title">\r\n    Title to edit</h3>\r\n <p>Content to edit.</p>\r\n</div>',
                 },
               ],
             },
             {
-              ChapterId: "title-3",
-              Title: "Title 3",
-              Content: "Content To Edit",
+              ChapterId: "chapter-3-title",
+              Title: "Chapter 3 Title",
+              Content:
+                '<div class="chapter" title="Chapter 3 Title" xmlns="http://www.w3.org/1999/xhtml">\r\n  <h2 class="title">\r\n    Title to edit</h2>\r\n  <p>Content to edit.</p>\r\n</div>',
               Sections: [
                 {
-                  SectionId: "section-3-1",
-                  Title: "Section 3.1",
-                  Content: "Content To Edit",
+                  SectionId: "section-1-title",
+                  Title: "Section 1 Title",
+                  Content:
+                    '<div class="section" title="Section 1 Title" xmlns="http://www.w3.org/1999/xhtml">\r\n  <h3 class="title">\r\n    Title to edit</h3>\r\n <p>Content to edit.</p>\r\n</div>',
                 },
               ],
             },
