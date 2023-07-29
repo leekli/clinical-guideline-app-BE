@@ -23,6 +23,8 @@ This is the Back End Web Server, Database & API which connects to the Front End 
 
 This application makes use of REST endpoints.
 
+<hr>
+
 ### Data Exclusions
 
 - All data is excluded from this repo, as it is commercially sensitive, subject to license agreements with <a href="https://www.nice.org.uk/">NICE</a>.
