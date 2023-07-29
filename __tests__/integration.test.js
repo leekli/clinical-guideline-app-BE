@@ -432,6 +432,7 @@ describe("Full Integration test", () => {
       approvalSetupDateTime: currentApprovalDateTime,
       approvalPurposeDescription:
         "This is a test approval submission description",
+      branchName: "cg104-chapter-0-edits",
       branchOwner: patchBranchBodyUserAddedResponse.body.branch.branchOwner,
       guideline: patchBranchBodyUserAddedResponse.body.branch.guideline,
     };
