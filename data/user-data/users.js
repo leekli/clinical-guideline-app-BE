@@ -60,18 +60,6 @@ const usersData = [
     dateAccountCreated: Date.now(),
   },
   {
-    firstName: "Kate",
-    lastName: "Dillon",
-    preferredName: "Kate",
-    jobTitle: "GP",
-    userName: "katedillon",
-    password: "",
-    emailAddress: "kate.dillon2@nhs.uk",
-    primaryAccessLevel: ["Clinician"],
-    secondaryAccessLevel: ["Viewer", "Author", "Editor"],
-    dateAccountCreated: Date.now(),
-  },
-  {
     firstName: "Jason",
     lastName: "Parker",
     preferredName: "Jason",
