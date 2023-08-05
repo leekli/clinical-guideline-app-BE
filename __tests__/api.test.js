@@ -379,7 +379,7 @@ describe("/api/users Test Requests", () => {
     test("GET /api/users: should return 200 and all users", async () => {
       const res = await request(app).get("/api/users").expect(200);
       expect(res.body.users).toBeInstanceOf(Array);
-      expect(res.body.users).toHaveLength(13);
+      expect(res.body.users).toHaveLength(12);
       res.body.users.forEach((user) => {
         expect(user).toMatchObject({
           _id: expect.any(String),

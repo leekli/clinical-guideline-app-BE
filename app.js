@@ -13,7 +13,7 @@ const {
 // Initalise Express server
 const app = express();
 
-// Middleware
+// Middleware and ability to handle large requests/reponse data
 app.use(cors());
 app.use(
   express.json({
@@ -25,7 +25,7 @@ app.use(
 );
 app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 
-// Routes
+// Main Router
 app.use("/api", apiRouter);
 
 // Error handling

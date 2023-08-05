@@ -21,7 +21,7 @@ exports.handleMdbErrors = (err, req, res, next) => {
     err.name === "MissingSchemaError" ||
     err.name === "ValidationError"
   ) {
-    res.status(400).json({ msg: "Bad Request" });
+    res.status(400).send({ msg: "Bad Request" });
   } else {
     next(err);
   }

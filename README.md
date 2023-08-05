@@ -20,7 +20,7 @@ As part of an ongoing research study at the School of Computing and Mathematics,
 <br />
 <br />
 This is the Back End Web Server, Database & API which connects to the Front End user application, which can be found in the following repo: <a href="https://github.com/leekli/clinical-guideline-app-FE">Clinical Guideline Authoring App: Front End</a>.
-
+<br /><br />
 This application makes use of REST endpoints.
 
 <hr>
@@ -66,12 +66,35 @@ $ npm test integration
 
 ### API Endpoints
 
-There are 5 main routes the API can take:
+There are 5 main routes and endpoints which the API can receive requests on:
 
-- /api
-- /api/guidelines
-- /api/users
-- /api/branches
-- /api/approvals
+- **/api**
+  - GET /api: Responds with a string.
+- **/api/guidelines**
+  - GET /api/guidelines - Responds with all existing Guidelines
+  - POST /api/guidelines - Creates a new Guldeine
+  - GET /api/guidelines/:guideline_id - Responds with a single existing Guideline by ID
+  - PATCH /api/guidelines/:guideline_id - Responds with an updated single existing Guideline by ID
+  - DELETE /api/guidelines/:guideline_id - Deletes a single existing Guideline by ID
+- **/api/users**
+  - GET /api/users - Reponds with all Users
+  - GET /api/users/:username - Responds with a single User by Username
+- **/api/branches**
+  - GET /api/branches - Reponds with all existing Branches
+  - POST /api/branches - Creates a new Branch
+  - GET /api/branches/:branch_name - Responds with a single existing Branch by Branch Name
+  - PATCH /api/branches/:branch_name - Responds with an updated single existing Branch by Branch Name
+  - DELETE /api/branches/:branch_name - Deletes a single existing Branch by Branch Name
+  - PATCH /api/branches/:branch_name/addusers - Adds a new user (collaborator) to an existing Branch by Branch Name
+  - PATCH /api/branches/:branch_name/addsection - Adds a new section to a Guideline within an existing Branch by Branch Name
+  - PATCH /api/branches/:branch_name/lockbranch - Locks the existing Branch by Branch Name
+  - PATCH /api/branches/:branch_name/unlockbranch - Unlocks the existing Branch by Branch Name
+  - GET /api/branches/:branch_name/comments - Responds with all user comments associated with a Branch by Branch Name
+  - POST /api/branches/:branch_name/comments - Adds a new comment to a Branch by Branch Name
+- **/api/approvals**
+  - GET /api/approvals - Responds with all existing Approvals
+  - POST /api/approvals - Creates a new Approval
+  - GET /api/approvals/:approval_name - Responds with a single existing Approval by Approval Name
+  - DELETE /api/approvals/:approval_name - Deletes a single existing Approval by Approval Name
 
 <hr>
