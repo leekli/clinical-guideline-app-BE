@@ -35,6 +35,17 @@ This application makes use of REST endpoints.
 
 <hr>
 
+### Acknowledgement
+
+> [!NOTE]
+> This University project relies on and is subject to a license with NICE (National Institute for Health and Care Excellence). Below is a formal acknowledgement for use of their data and materials as part of the project.
+
+© National Institute for Health and Care Excellence 2018
+
+This content is made available by NICE (National Institute for Health and Care Excellence) but distributed by a third-party distributor. NICE takes no responsibility for the format in which this content is delivered. The distributor is responsible for incorporating updates from NICE and cannot alter NICE content in any way. Any content delivered alongside content provided by NICE will not necessarily reflect the views of either NICE or those organisations commissioned to develop NICE guidance.
+
+<hr>
+
 ### Technology & Packages
 
 - <strong>Web Server:</strong> Express.js
