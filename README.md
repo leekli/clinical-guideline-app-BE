@@ -27,9 +27,11 @@ This application makes use of REST endpoints.
 
 ### Data Exclusions
 
-- All data is excluded from this repo, as it is commercially sensitive, subject to license agreements with <a href="https://www.nice.org.uk/">NICE</a>.
+> [!WARNING]
+> All data is excluded from this repo, as it is commercially sensitive, subject to license agreements with <a href="https://www.nice.org.uk/">NICE</a>.
 
-- Database name ignored, requires a .env file as part of `dotenv`.
+> [!WARNING]
+> Database name ignored, requires a .env file as part of `dotenv`.
 
 <hr>
 
