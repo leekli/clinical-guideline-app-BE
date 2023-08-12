@@ -72,15 +72,24 @@ There are 5 main routes and endpoints which the API can receive requests on:
 
 - **/api**
   - GET /api: Responds with a string.
+
+<br />
+
 - **/api/guidelines**
   - GET /api/guidelines - Responds with all existing Guidelines
   - POST /api/guidelines - Creates a new Guldeine
   - GET /api/guidelines/:guideline_id - Responds with a single existing Guideline by ID
   - PATCH /api/guidelines/:guideline_id - Responds with an updated single existing Guideline by ID
   - DELETE /api/guidelines/:guideline_id - Deletes a single existing Guideline by ID
+
+<br />
+
 - **/api/users**
   - GET /api/users - Reponds with all Users
   - GET /api/users/:username - Responds with a single User by Username
+
+<br />
+
 - **/api/branches**
   - GET /api/branches - Reponds with all existing Branches
   - POST /api/branches - Creates a new Branch
@@ -93,6 +102,9 @@ There are 5 main routes and endpoints which the API can receive requests on:
   - PATCH /api/branches/:branch_name/unlockbranch - Unlocks the existing Branch by Branch Name
   - GET /api/branches/:branch_name/comments - Responds with all user comments associated with a Branch by Branch Name
   - POST /api/branches/:branch_name/comments - Adds a new comment to a Branch by Branch Name
+
+<br />
+
 - **/api/approvals**
   - GET /api/approvals - Responds with all existing Approvals
   - POST /api/approvals - Creates a new Approval
