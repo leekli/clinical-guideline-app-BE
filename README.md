@@ -10,10 +10,10 @@ The project brief:
 
 <div>
 <i>
-<strong><u>Developing an authoring platform to create and edit existing clinical guidelines.</u></strong>
+<strong><u>"Developing an authoring platform to create and edit existing clinical guidelines.</u></strong>
 <br />
 <br />
-As part of an ongoing research study at the School of Computing and Mathematics, we have developed a mobile device application to deliver clinical information to NHS clinicians. This MSc project aims to build a prototype clinical guideline authoring and editing platform based on existing web frameworks. The goals are to: produce a web- based application where users can utilise CRUD functions (Create, Read, Update, Delete) with exiting guideline documents; Implement multi-level user admin system; Utilise HTML, CSS, JS and other web-based languages; Test the system to ensure it meets usability guidelines; and conduct literature review/research/testing to ensure the system is efficient.
+As part of an ongoing research study at the School of Computing and Mathematics, we have developed a mobile device application to deliver clinical information to NHS clinicians. This MSc project aims to build a prototype clinical guideline authoring and editing platform based on existing web frameworks. The goals are to: produce a web- based application where users can utilise CRUD functions (Create, Read, Update, Delete) with exiting guideline documents; Implement multi-level user admin system; Utilise HTML, CSS, JS and other web-based languages; Test the system to ensure it meets usability guidelines; and conduct literature review/research/testing to ensure the system is efficient."
 </i>
 </div>
 
@@ -50,7 +50,7 @@ This content is made available by NICE (National Institute for Health and Care E
 
 - <strong>Web Server:</strong> Express.js
 - <strong>Testing:</strong> Jest & Supertest
-- <strong>Database:</strong> MongoDB/Mongoose
+- <strong>Database:</strong> MongoDB & Mongoose
 
 <hr>
 
@@ -79,47 +79,47 @@ $ npm test integration
 
 ### API Endpoints
 
-There are 5 main routes and endpoints which the API can receive requests on:
+There are 5 main routes and corresponding endpoints which the API can receive requests on:
 
 - **/api**
-  - GET /api: Responds with a string.
+  - `GET /api`: Responds with a string.
 
 <br />
 
 - **/api/guidelines**
-  - GET /api/guidelines - Responds with all existing Guidelines
-  - POST /api/guidelines - Creates a new Guldeine
-  - GET /api/guidelines/:guideline_id - Responds with a single existing Guideline by ID
-  - PATCH /api/guidelines/:guideline_id - Responds with an updated single existing Guideline by ID
-  - DELETE /api/guidelines/:guideline_id - Deletes a single existing Guideline by ID
+  - `GET /api/guidelines` - Responds with all existing Guidelines
+  - `POST /api/guidelines` - Creates a new Guldeine
+  - `GET /api/guidelines/:guideline_id` - Responds with a single existing Guideline by ID
+  - `PATCH /api/guidelines/:guideline_id` - Responds with an updated single existing Guideline by ID
+  - `DELETE /api/guidelines/:guideline_id` - Deletes a single existing Guideline by ID
 
 <br />
 
 - **/api/users**
-  - GET /api/users - Reponds with all Users
-  - GET /api/users/:username - Responds with a single User by Username
+  - `GET /api/users` - Reponds with all Users
+  - `GET /api/users/:username` - Responds with a single User by Username
 
 <br />
 
 - **/api/branches**
-  - GET /api/branches - Reponds with all existing Branches
-  - POST /api/branches - Creates a new Branch
-  - GET /api/branches/:branch_name - Responds with a single existing Branch by Branch Name
-  - PATCH /api/branches/:branch_name - Responds with an updated single existing Branch by Branch Name
-  - DELETE /api/branches/:branch_name - Deletes a single existing Branch by Branch Name
-  - PATCH /api/branches/:branch_name/addusers - Adds a new user (collaborator) to an existing Branch by Branch Name
-  - PATCH /api/branches/:branch_name/addsection - Adds a new section to a Guideline within an existing Branch by Branch Name
-  - PATCH /api/branches/:branch_name/lockbranch - Locks the existing Branch by Branch Name
-  - PATCH /api/branches/:branch_name/unlockbranch - Unlocks the existing Branch by Branch Name
-  - GET /api/branches/:branch_name/comments - Responds with all user comments associated with a Branch by Branch Name
-  - POST /api/branches/:branch_name/comments - Adds a new comment to a Branch by Branch Name
+  - `GET /api/branches` - Reponds with all existing Branches
+  - `POST /api/branches` - Creates a new Branch
+  - `GET /api/branches/:branch_name` - Responds with a single existing Branch by Branch Name
+  - `PATCH /api/branches/:branch_name` - Responds with an updated single existing Branch by Branch Name
+  - `DELETE /api/branches/:branch_name` - Deletes a single existing Branch by Branch Name
+  - `PATCH /api/branches/:branch_name/addusers` - Adds a new user (collaborator) to an existing Branch by Branch Name
+  - `PATCH /api/branches/:branch_name/addsection` - Adds a new section to a Guideline within an existing Branch by Branch Name
+  - `PATCH /api/branches/:branch_name/lockbranch` - Locks the existing Branch by Branch Name
+  - `PATCH /api/branches/:branch_name/unlockbranch` - Unlocks the existing Branch by Branch Name
+  - `GET /api/branches/:branch_name/comments` - Responds with all user comments associated with a Branch by Branch Name
+  - `POST /api/branches/:branch_name/comments` - Adds a new comment to a Branch by Branch Name
 
 <br />
 
 - **/api/approvals**
-  - GET /api/approvals - Responds with all existing Approvals
-  - POST /api/approvals - Creates a new Approval
-  - GET /api/approvals/:approval_name - Responds with a single existing Approval by Approval Name
-  - DELETE /api/approvals/:approval_name - Deletes a single existing Approval by Approval Name
+  - `GET /api/approvals` - Responds with all existing Approvals
+  - `POST /api/approvals` - Creates a new Approval
+  - `GET /api/approvals/:approval_name` - Responds with a single existing Approval by Approval Name
+  - `DELETE /api/approvals/:approval_name` - Deletes a single existing Approval by Approval Name
 
 <hr>
