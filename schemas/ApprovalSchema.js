@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 const approvalSchema = new mongoose.Schema({
   type: {
@@ -31,4 +31,4 @@ const approvalSchema = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model("Approval", approvalSchema);
+module.exports = mongoose.model('Approval', approvalSchema);

@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 const guidelineSchema = new mongoose.Schema({
   GuidanceNumber: {
@@ -54,4 +54,4 @@ const guidelineSchema = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model("Guideline", guidelineSchema);
+module.exports = mongoose.model('Guideline', guidelineSchema);

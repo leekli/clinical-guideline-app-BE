@@ -1,4 +1,4 @@
-const seed = require("./seed");
+const seed = require('./seed');
 
 seed().then(() => {
   console.log(`🌱 Seeding complete on ${process.env.NODE_ENV} Database`);

@@ -1,4 +1,4 @@
-const fs = require("fs/promises");
+const fs = require('fs/promises');
 
 async function readFormatFiles() {
   const allGuidelines = [];
@@ -6,8 +6,8 @@ async function readFormatFiles() {
 
   for (let i = 0; i < fileNames.length; i++) {
     const fileContents = await fs.readFile(
-      `${__dirname}/guideline-data/${fileNames[i]}`,
-      "utf-8"
+        `${__dirname}/guideline-data/${fileNames[i]}`,
+        'utf-8',
     );
 
     const parsedContents = JSON.parse(fileContents);

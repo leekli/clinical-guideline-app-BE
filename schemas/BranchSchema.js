@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 const commentsSchema = mongoose.Schema({
   author: {
@@ -51,4 +51,4 @@ const branchSchema = new mongoose.Schema({
   comments: [commentsSchema],
 });
 
-module.exports = mongoose.model("Branch", branchSchema);
+module.exports = mongoose.model('Branch', branchSchema);

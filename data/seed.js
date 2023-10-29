@@ -1,28 +1,28 @@
-require("dotenv").config();
-const mongoose = require("mongoose");
-const readFormatFiles = require("./readFormatFiles");
-const guidelineSchema = require("../schemas/GuidelineSchema.js");
-const userSchema = require("../schemas/UserSchema.js");
-const usersData = require("./user-data/users");
-const branchSchema = require("../schemas/BranchSchema");
-const approvalSchema = require("../schemas/ApprovalSchema");
-const ENV = process.env.NODE_ENV || "development";
+require('dotenv').config();
+const mongoose = require('mongoose');
+const readFormatFiles = require('./readFormatFiles');
+const guidelineSchema = require('../schemas/GuidelineSchema.js');
+const userSchema = require('../schemas/UserSchema.js');
+const usersData = require('./user-data/users');
+const branchSchema = require('../schemas/BranchSchema');
+const approvalSchema = require('../schemas/ApprovalSchema');
+const ENV = process.env.NODE_ENV || 'development';
 
-require("dotenv").config({
+require('dotenv').config({
   path: `${__dirname}/../.env.${ENV}`,
 });
 
 async function seed() {
-  if (!process.env.DATABASE_URL) throw new Error("Need to set a DATABASE_URL");
+  if (!process.env.DATABASE_URL) throw new Error('Need to set a DATABASE_URL');
 
   return mongoose.connect(process.env.DATABASE_URL).then(async () => {
     console.log(
-      `⚡️ Connected to the ${process.env.NODE_ENV} Database, preparing to seed...`
+        `⚡️ Connected to the ${process.env.NODE_ENV} Database, preparing to seed...`,
     );
 
     const guidelinesData = await readFormatFiles();
 
-    const { guidelines, users, branches, approvals } =
+    const {guidelines, users, branches, approvals} =
       mongoose.connection.collections;
 
     await approvals.drop(() => {});

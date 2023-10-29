@@ -1,10 +1,10 @@
-const { findAllUsers, findUserByUsername } = require("../models/users.model");
+const {findAllUsers, findUserByUsername} = require('../models/users.model');
 
 exports.getUsers = async (req, res, next) => {
   try {
     const users = await findAllUsers();
 
-    res.status(200).send({ users });
+    res.status(200).send({users});
   } catch (err) {
     next(err);
   }
@@ -12,11 +12,11 @@ exports.getUsers = async (req, res, next) => {
 
 exports.getUserByUsername = async (req, res, next) => {
   try {
-    const { username } = req.params;
+    const {username} = req.params;
 
     const user = await findUserByUsername(username);
 
-    res.status(200).send({ user });
+    res.status(200).send({user});
   } catch (err) {
     next(err);
   }

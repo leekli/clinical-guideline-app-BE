@@ -4,15 +4,15 @@ const {
   updateGuidelineByNumber,
   findAllGuidelines,
   insertNewGuideline,
-} = require("../models/guidelines.model");
+} = require('../models/guidelines.model');
 
 exports.getGuidelines = async (req, res, next) => {
   try {
-    const { search } = req.query;
+    const {search} = req.query;
 
     const guidelines = await findAllGuidelines(search);
 
-    res.status(200).send({ guidelines });
+    res.status(200).send({guidelines});
   } catch (err) {
     next(err);
   }
@@ -20,11 +20,11 @@ exports.getGuidelines = async (req, res, next) => {
 
 exports.getGuidelineById = async (req, res, next) => {
   try {
-    const { guideline_id } = req.params;
+    const {guideline_id} = req.params;
 
     const guideline = await findGuidelineByNumber(guideline_id);
 
-    res.status(200).send({ guideline });
+    res.status(200).send({guideline});
   } catch (err) {
     next(err);
   }
@@ -36,7 +36,7 @@ exports.postGuideline = async (req, res, next) => {
 
     const guideline = await insertNewGuideline(postBody);
 
-    res.status(201).send({ guideline });
+    res.status(201).send({guideline});
   } catch (err) {
     next(err);
   }
@@ -44,7 +44,7 @@ exports.postGuideline = async (req, res, next) => {
 
 exports.deleteGuidelineById = async (req, res, next) => {
   try {
-    const { guideline_id } = req.params;
+    const {guideline_id} = req.params;
 
     await deleteOneGuidelineByNumber(guideline_id);
 
@@ -56,16 +56,16 @@ exports.deleteGuidelineById = async (req, res, next) => {
 
 exports.patchGuidelineById = async (req, res, next) => {
   try {
-    const { guideline_id } = req.params;
-    const { patchedGuideline, submissionInfo } = req.body;
+    const {guideline_id} = req.params;
+    const {patchedGuideline, submissionInfo} = req.body;
 
     const guideline = await updateGuidelineByNumber(
-      guideline_id,
-      patchedGuideline,
-      submissionInfo
+        guideline_id,
+        patchedGuideline,
+        submissionInfo,
     );
 
-    res.status(200).send({ guideline });
+    res.status(200).send({guideline});
   } catch (err) {
     next(err);
   }

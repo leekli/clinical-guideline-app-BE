@@ -1,9 +1,9 @@
 // Full Integration test end-to-end of the life of a guideline
 
-const request = require("supertest");
-const app = require("../app");
-const mongoose = require("mongoose");
-const seed = require("../data/seed");
+const request = require('supertest');
+const app = require('../app');
+const mongoose = require('mongoose');
+const seed = require('../data/seed');
 
 beforeAll(async () => {
   await seed();
@@ -12,7 +12,7 @@ beforeAll(async () => {
 
   await mongoose.connect(process.env.DATABASE_URL);
 
-  console.log("⚡️ Connected to TEST Database");
+  console.log('⚡️ Connected to TEST Database');
 });
 
 afterAll(async () => {
@@ -42,12 +42,12 @@ afterAll(async () => {
     --> Do final GET request to /guidelines/:id and check the changes have been made
 */
 
-describe("Full Integration test", () => {
-  test("All requests should return the corresponding successful status code and content checks", async () => {
+describe('Full Integration test', () => {
+  test('All requests should return the corresponding successful status code and content checks', async () => {
     // 1. GET all Guidelines (GET /api/guidelines)
     const allGuidelinesResponse = await request(app)
-      .get("/api/guidelines")
-      .expect(200);
+        .get('/api/guidelines')
+        .expect(200);
 
     const allGuidelines = allGuidelinesResponse.body.guidelines;
 
@@ -70,51 +70,51 @@ describe("Full Integration test", () => {
 
     // 2. GET a Single Guideline (GET /api/guidelines/:guideline_name)
     const singleGuidelineResponse = await request(app)
-      .get("/api/guidelines/CG104")
-      .expect(200);
+        .get('/api/guidelines/CG104')
+        .expect(200);
 
     const singleGuideline = singleGuidelineResponse.body.guideline;
 
-    expect(singleGuideline.GuidanceNumber).toBe("CG104");
+    expect(singleGuideline.GuidanceNumber).toBe('CG104');
     expect(singleGuideline.GuidanceSlug).toBe(
-      "metastatic-malignant-disease-of-unknown-primary-origin-in-adults-diagn-cg104"
+        'metastatic-malignant-disease-of-unknown-primary-origin-in-adults-diagn-cg104',
     );
     expect(singleGuideline.LongTitle).toBe(
-      "Metastatic malignant disease of unknown primary origin in adults: diagnosis and management (CG104)"
+        'Metastatic malignant disease of unknown primary origin in adults: diagnosis and management (CG104)',
     );
 
     // 3. POST the above Single Guideline to a new branch (POST /api/branches)
     const currentBranchDateTime = String(Date.now());
     const branchToSetup = {
-      type: "edit",
-      branchName: "cg104-chapter-0-edits",
+      type: 'edit',
+      branchName: 'cg104-chapter-0-edits',
       branchSetupDateTime: currentBranchDateTime,
-      branchOwner: "joebloggs",
+      branchOwner: 'joebloggs',
       guideline: singleGuideline,
     };
 
     const postBranchResponse = await request(app)
-      .post("/api/branches?type=edit")
-      .send(branchToSetup)
-      .expect(201);
+        .post('/api/branches?type=edit')
+        .send(branchToSetup)
+        .expect(201);
 
     const postBranch = postBranchResponse.body.branch;
 
     expect(postBranch.branchSetupDateTime).toBe(currentBranchDateTime);
-    expect(postBranch).toHaveProperty("_id");
+    expect(postBranch).toHaveProperty('_id');
     expect(postBranch).toMatchObject({
-      type: "edit",
-      branchName: "cg104-chapter-0-edits",
+      type: 'edit',
+      branchName: 'cg104-chapter-0-edits',
       branchSetupDateTime: currentBranchDateTime,
-      branchOwner: "joebloggs",
+      branchOwner: 'joebloggs',
       branchAllowedUsers: [],
       guideline: {
-        GuidanceNumber: "CG104",
+        GuidanceNumber: 'CG104',
         GuidanceSlug:
-          "metastatic-malignant-disease-of-unknown-primary-origin-in-adults-diagn-cg104",
-        GuidanceType: "Clinical guideline",
+          'metastatic-malignant-disease-of-unknown-primary-origin-in-adults-diagn-cg104',
+        GuidanceType: 'Clinical guideline',
         LongTitle:
-          "Metastatic malignant disease of unknown primary origin in adults: diagnosis and management (CG104)",
+          'Metastatic malignant disease of unknown primary origin in adults: diagnosis and management (CG104)',
         MetadataApplicationProfile: expect.any(Object),
         NHSEvidenceAccredited: true,
         InformationStandardAccredited: false,
@@ -122,44 +122,44 @@ describe("Full Integration test", () => {
         LastModified: expect.any(String),
         Uri: expect.any(String),
         Title:
-          "Metastatic malignant disease of unknown primary origin in adults: diagnosis and management",
+          'Metastatic malignant disease of unknown primary origin in adults: diagnosis and management',
         TitleContent: null,
       },
     });
 
     // 4. GET all branches and ensure new branch exists (GET /api/branches)
     const allBranchesResponse = await request(app)
-      .get("/api/branches")
-      .expect(200);
+        .get('/api/branches')
+        .expect(200);
 
     const allBranches = allBranchesResponse.body.branches;
 
     expect(allBranches).toBeInstanceOf(Array);
     expect(allBranches).toHaveLength(1);
-    expect(allBranches[0].branchName).toBe("cg104-chapter-0-edits");
+    expect(allBranches[0].branchName).toBe('cg104-chapter-0-edits');
 
     // 5. GET Single branch, new one created (GET /api/branches/:branch_name)
     const singleBranchResponse = await request(app)
-      .get("/api/branches/cg104-chapter-0-edits")
-      .expect(200);
+        .get('/api/branches/cg104-chapter-0-edits')
+        .expect(200);
 
     const singleBranch = singleBranchResponse.body.branch;
 
     expect(singleBranch).toBeInstanceOf(Object);
     expect(singleBranch).toMatchObject({
       _id: expect.any(String),
-      type: "edit",
-      branchName: "cg104-chapter-0-edits",
+      type: 'edit',
+      branchName: 'cg104-chapter-0-edits',
       branchSetupDateTime: currentBranchDateTime,
-      branchOwner: "joebloggs",
+      branchOwner: 'joebloggs',
       branchAllowedUsers: [],
       guideline: {
-        GuidanceNumber: "CG104",
+        GuidanceNumber: 'CG104',
         GuidanceSlug:
-          "metastatic-malignant-disease-of-unknown-primary-origin-in-adults-diagn-cg104",
-        GuidanceType: "Clinical guideline",
+          'metastatic-malignant-disease-of-unknown-primary-origin-in-adults-diagn-cg104',
+        GuidanceType: 'Clinical guideline',
         LongTitle:
-          "Metastatic malignant disease of unknown primary origin in adults: diagnosis and management (CG104)",
+          'Metastatic malignant disease of unknown primary origin in adults: diagnosis and management (CG104)',
         MetadataApplicationProfile: expect.any(Object),
         NHSEvidenceAccredited: true,
         InformationStandardAccredited: false,
@@ -167,7 +167,7 @@ describe("Full Integration test", () => {
         LastModified: expect.any(String),
         Uri: expect.any(String),
         Title:
-          "Metastatic malignant disease of unknown primary origin in adults: diagnosis and management",
+          'Metastatic malignant disease of unknown primary origin in adults: diagnosis and management',
         TitleContent: null,
       },
     });
@@ -186,53 +186,53 @@ describe("Full Integration test", () => {
       '    <div id="cg104_1_3_1_1" class="recommendation_text">\r\n' +
       '      <p class="numbered-paragraph">\r\n' +
       '        <span class="paragraph-number">1.3.1.1 </span>Do not offer further investigations to identify the primary site of origin of the malignancy to patients who are unfit for treatment.</p>\r\n' +
-      "    </div>\r\n" +
+      '    </div>\r\n' +
       '    <div id="cg104_1_3_1_2" class="recommendation_text">\r\n' +
       '      <p class="numbered-paragraph">\r\n' +
       '        <span class="paragraph-number">1.3.1.2 </span>Perform investigations only if:</p>\r\n' +
       '      <div class="itemizedlist indented">\r\n' +
       '        <ul class="itemizedlist">\r\n' +
       '          <li class="listitem">\r\n' +
-      "            <p>the results are likely to affect a treatment decision</p>\r\n" +
-      "          </li>\r\n" +
+      '            <p>the results are likely to affect a treatment decision</p>\r\n' +
+      '          </li>\r\n' +
       '          <li class="listitem">\r\n' +
-      "            <p>the patient understands why the investigations are being carried out </p>\r\n" +
-      "          </li>\r\n" +
+      '            <p>the patient understands why the investigations are being carried out </p>\r\n' +
+      '          </li>\r\n' +
       '          <li class="listitem">\r\n' +
-      "            <p>the patient understands the potential benefits and risks of investigation and treatment <strong>and</strong></p>\r\n" +
-      "          </li>\r\n" +
+      '            <p>the patient understands the potential benefits and risks of investigation and treatment <strong>and</strong></p>\r\n' +
+      '          </li>\r\n' +
       '          <li class="listitem">\r\n' +
-      "            <p>the patient is prepared to accept treatment.</p>\r\n" +
-      "          </li>\r\n" +
-      "        </ul>\r\n" +
-      "      </div>\r\n" +
-      "    </div>\r\n" +
+      '            <p>the patient is prepared to accept treatment.</p>\r\n' +
+      '          </li>\r\n' +
+      '        </ul>\r\n' +
+      '      </div>\r\n' +
+      '    </div>\r\n' +
       '    <div id="cg104_1_3_1_3" class="recommendation_text">\r\n' +
       '      <p class="numbered-paragraph">\r\n' +
       '        <span class="paragraph-number">1.3.1.3 </span>THIS IS A RANDOMLY EDITED SECTION OF THE GUIDELINE</p>\r\n' +
-      "    </div>\r\n" +
-      "  </div>\r\n" +
+      '    </div>\r\n' +
+      '  </div>\r\n' +
       '  <div class="section" title="1.3.2 Selecting optimal treatment" id="cg104_1.3.2-selecting-optimal-treatment">\r\n' +
       '    <h4 class="title">\r\n' +
       '      <a id="selecting-optimal-treatment"></a>1.3.2 Selecting optimal treatment</h4>\r\n' +
       '    <div id="cg104_1_3_2_1" class="recommendation_text">\r\n' +
       '      <p class="numbered-paragraph">\r\n' +
       '        <span class="paragraph-number">1.3.2.1 </span>THIS IS ANOTHER SECTION OF THE GUIDELINE EDITIED</p>\r\n' +
-      "    </div>\r\n" +
+      '    </div>\r\n' +
       '    <div id="cg104_1_3_2_2" class="recommendation_text">\r\n' +
       '      <p class="numbered-paragraph">\r\n' +
       `        <span class="paragraph-number">1.3.2.2 </span>Discuss the patient's prognostic factors with the patient and their relatives or carers, if appropriate, to help them make informed decisions about treatment.</p>\r\n` +
-      "    </div>\r\n" +
+      '    </div>\r\n' +
       '    <div id="cg104_1_3_2_3" class="recommendation_text">\r\n' +
       '      <p class="numbered-paragraph">\r\n' +
       `        <span class="paragraph-number">1.3.2.3 </span>Include the patient's prognostic factors in decision aids and other information for patients and their relatives or carers about treatment options.</p>\r\n` +
-      "    </div>\r\n" +
+      '    </div>\r\n' +
       '    <div id="cg104_1_3_2_4" class="recommendation_text">\r\n' +
       '      <p class="numbered-paragraph">\r\n' +
       '        <span class="paragraph-number">1.3.2.4 </span>This recommendation has been withdrawn.</p>\r\n' +
-      "    </div>\r\n" +
-      "  </div>\r\n" +
-      "</div>";
+      '    </div>\r\n' +
+      '  </div>\r\n' +
+      '</div>';
 
     const expected =
       '<div class="section" title="1.3 Factors influencing management decisions" id="cg104_1.3-factors-influencing-management-decisions" xmlns="http://www.w3.org/1999/xhtml">\r\n' +
@@ -244,58 +244,58 @@ describe("Full Integration test", () => {
       '    <div id="cg104_1_3_1_1" class="recommendation_text">\r\n' +
       '      <p class="numbered-paragraph">\r\n' +
       '        <span class="paragraph-number">1.3.1.1 </span>Do not offer further investigations to identify the primary site of origin of the malignancy to patients who are unfit for treatment.</p>\r\n' +
-      "    </div>\r\n" +
+      '    </div>\r\n' +
       '    <div id="cg104_1_3_1_2" class="recommendation_text">\r\n' +
       '      <p class="numbered-paragraph">\r\n' +
       '        <span class="paragraph-number">1.3.1.2 </span>Perform investigations only if:</p>\r\n' +
       '      <div class="itemizedlist indented">\r\n' +
       '        <ul class="itemizedlist">\r\n' +
       '          <li class="listitem">\r\n' +
-      "            <p>the results are likely to affect a treatment decision</p>\r\n" +
-      "          </li>\r\n" +
+      '            <p>the results are likely to affect a treatment decision</p>\r\n' +
+      '          </li>\r\n' +
       '          <li class="listitem">\r\n' +
-      "            <p>the patient understands why the investigations are being carried out </p>\r\n" +
-      "          </li>\r\n" +
+      '            <p>the patient understands why the investigations are being carried out </p>\r\n' +
+      '          </li>\r\n' +
       '          <li class="listitem">\r\n' +
-      "            <p>the patient understands the potential benefits and risks of investigation and treatment <strong>and</strong></p>\r\n" +
-      "          </li>\r\n" +
+      '            <p>the patient understands the potential benefits and risks of investigation and treatment <strong>and</strong></p>\r\n' +
+      '          </li>\r\n' +
       '          <li class="listitem">\r\n' +
-      "            <p>the patient is prepared to accept treatment.</p>\r\n" +
-      "          </li>\r\n" +
-      "        </ul>\r\n" +
-      "      </div>\r\n" +
-      "    </div>\r\n" +
+      '            <p>the patient is prepared to accept treatment.</p>\r\n' +
+      '          </li>\r\n' +
+      '        </ul>\r\n' +
+      '      </div>\r\n' +
+      '    </div>\r\n' +
       '    <div id="cg104_1_3_1_3" class="recommendation_text">\r\n' +
       '      <p class="numbered-paragraph">\r\n' +
       '        <span class="paragraph-number">1.3.1.3 </span>THIS IS A RANDOMLY EDITED SECTION OF THE GUIDELINE</p>\r\n' +
-      "    </div>\r\n" +
-      "  </div>\r\n" +
+      '    </div>\r\n' +
+      '  </div>\r\n' +
       '  <div class="section" title="1.3.2 Selecting optimal treatment" id="cg104_1.3.2-selecting-optimal-treatment">\r\n' +
       '    <h4 class="title">\r\n' +
       '      <a id="selecting-optimal-treatment"></a>1.3.2 Selecting optimal treatment</h4>\r\n' +
       '    <div id="cg104_1_3_2_1" class="recommendation_text">\r\n' +
       '      <p class="numbered-paragraph">\r\n' +
       '        <span class="paragraph-number">1.3.2.1 </span>THIS IS ANOTHER SECTION OF THE GUIDELINE EDITIED</p>\r\n' +
-      "    </div>\r\n" +
+      '    </div>\r\n' +
       '    <div id="cg104_1_3_2_2" class="recommendation_text">\r\n' +
       '      <p class="numbered-paragraph">\r\n' +
       `        <span class="paragraph-number">1.3.2.2 </span>Discuss the patient's prognostic factors with the patient and their relatives or carers, if appropriate, to help them make informed decisions about treatment.</p>\r\n` +
-      "    </div>\r\n" +
+      '    </div>\r\n' +
       '    <div id="cg104_1_3_2_3" class="recommendation_text">\r\n' +
       '      <p class="numbered-paragraph">\r\n' +
       `        <span class="paragraph-number">1.3.2.3 </span>Include the patient's prognostic factors in decision aids and other information for patients and their relatives or carers about treatment options.</p>\r\n` +
-      "    </div>\r\n" +
+      '    </div>\r\n' +
       '    <div id="cg104_1_3_2_4" class="recommendation_text">\r\n' +
       '      <p class="numbered-paragraph">\r\n' +
       '        <span class="paragraph-number">1.3.2.4 </span>This recommendation has been withdrawn.</p>\r\n' +
-      "    </div>\r\n" +
-      "  </div>\r\n" +
-      "</div>";
+      '    </div>\r\n' +
+      '  </div>\r\n' +
+      '</div>';
 
     const patchBranchBodyResponse = await request(app)
-      .patch("/api/branches/cg104-chapter-0-edits")
-      .send({ chapterNum, sectionNum, patchBody })
-      .expect(200);
+        .patch('/api/branches/cg104-chapter-0-edits')
+        .send({chapterNum, sectionNum, patchBody})
+        .expect(200);
 
     const patchBranchBody = patchBranchBodyResponse.body.branch;
 
@@ -303,101 +303,101 @@ describe("Full Integration test", () => {
     const currentHour = String(new Date().getHours());
 
     expect(
-      patchBranchBody.guideline.Chapters[chapterNum].Sections[sectionNum]
-        .SectionId
-    ).toBe("13-factors-influencing-management-decisions");
+        patchBranchBody.guideline.Chapters[chapterNum].Sections[sectionNum]
+            .SectionId,
+    ).toBe('13-factors-influencing-management-decisions');
     expect(
-      patchBranchBody.guideline.Chapters[chapterNum].Sections[sectionNum].Title
-    ).toBe("1.3 Factors influencing management decisions");
+        patchBranchBody.guideline.Chapters[chapterNum].Sections[sectionNum].Title,
+    ).toBe('1.3 Factors influencing management decisions');
     expect(
-      patchBranchBody.guideline.Chapters[chapterNum].Sections[sectionNum]
-        .Content
+        patchBranchBody.guideline.Chapters[chapterNum].Sections[sectionNum]
+            .Content,
     ).toEqual(expected);
-    expect(typeof patchBranchBody.branchLastModified).toBe("string");
+    expect(typeof patchBranchBody.branchLastModified).toBe('string');
     expect(/^\d+$/.test(patchBranchBody.branchLastModified)).toBe(true);
     expect(
-      String(new Date(Number(patchBranchBody.branchLastModified)))
+        String(new Date(Number(patchBranchBody.branchLastModified))),
     ).toContain(currentYear);
     expect(
-      String(new Date(Number(patchBranchBody.branchLastModified)))
+        String(new Date(Number(patchBranchBody.branchLastModified))),
     ).toContain(currentHour);
 
     // 7. PATCH specific branch and add a new user to the approved list who can edit this branch (PATCH /api/branches/:branch_name/adduser)
-    const userToAdd = "janedoe";
+    const userToAdd = 'janedoe';
 
     const patchBranchBodyUserAddedResponse = await request(app)
-      .patch("/api/branches/cg104-chapter-0-edits/addusers")
-      .send({ userToAdd })
-      .expect(200);
+        .patch('/api/branches/cg104-chapter-0-edits/addusers')
+        .send({userToAdd})
+        .expect(200);
 
     const patchBranchBodyUserAdded =
       patchBranchBodyUserAddedResponse.body.branch;
 
-    expect(patchBranchBodyUserAdded.branchOwner).toBe("joebloggs");
-    expect(patchBranchBodyUserAdded.branchAllowedUsers).toEqual(["janedoe"]);
+    expect(patchBranchBodyUserAdded.branchOwner).toBe('joebloggs');
+    expect(patchBranchBodyUserAdded.branchAllowedUsers).toEqual(['janedoe']);
 
-    expect(typeof patchBranchBodyUserAdded.branchLastModified).toBe("string");
+    expect(typeof patchBranchBodyUserAdded.branchLastModified).toBe('string');
     expect(/^\d+$/.test(patchBranchBodyUserAdded.branchLastModified)).toBe(
-      true
+        true,
     );
     expect(
-      String(new Date(Number(patchBranchBodyUserAdded.branchLastModified)))
+        String(new Date(Number(patchBranchBodyUserAdded.branchLastModified))),
     ).toContain(currentYear);
     expect(
-      String(new Date(Number(patchBranchBodyUserAdded.branchLastModified)))
+        String(new Date(Number(patchBranchBodyUserAdded.branchLastModified))),
     ).toContain(currentHour);
 
     // 8. POST 2 new comments to the branch
     let commentDateNow = Date.now();
 
     let newComment = {
-      author: "katedillon",
-      body: "You need to re-review the evidence and references for chapter 2 section 3",
+      author: 'katedillon',
+      body: 'You need to re-review the evidence and references for chapter 2 section 3',
       commentDate: commentDateNow,
     };
 
     const firstCommentSubmission = await request(app)
-      .post("/api/branches/cg104-chapter-0-edits/comments")
-      .send({ newComment })
-      .expect(200);
+        .post('/api/branches/cg104-chapter-0-edits/comments')
+        .send({newComment})
+        .expect(200);
 
     const firstComment = firstCommentSubmission.body.comment;
 
     expect(firstComment).toBeInstanceOf(Object);
     expect(firstComment).toEqual({
       _id: expect.any(String),
-      author: "katedillon",
-      body: "You need to re-review the evidence and references for chapter 2 section 3",
+      author: 'katedillon',
+      body: 'You need to re-review the evidence and references for chapter 2 section 3',
       commentDate: expect.any(String),
     });
 
     commentDateNow = Date.now();
 
     newComment = {
-      author: "benlewry",
-      body: "Blah blah blah blah blah blah blah blah blah blah blah",
+      author: 'benlewry',
+      body: 'Blah blah blah blah blah blah blah blah blah blah blah',
       commentDate: commentDateNow,
     };
 
     const secondCommentSubmission = await request(app)
-      .post("/api/branches/cg104-chapter-0-edits/comments")
-      .send({ newComment })
-      .expect(200);
+        .post('/api/branches/cg104-chapter-0-edits/comments')
+        .send({newComment})
+        .expect(200);
 
     const secondComment = secondCommentSubmission.body.comment;
 
     expect(secondComment).toBeInstanceOf(Object);
     expect(secondComment).toEqual({
       _id: expect.any(String),
-      author: "benlewry",
-      body: "Blah blah blah blah blah blah blah blah blah blah blah",
+      author: 'benlewry',
+      body: 'Blah blah blah blah blah blah blah blah blah blah blah',
       commentDate: expect.any(String),
     });
 
     // --> 8.5 - GET all comments and check both are there
     let allBranchComments = await request(app)
-      .get("/api/branches/cg104-chapter-0-edits/comments")
-      .expect(200);
+        .get('/api/branches/cg104-chapter-0-edits/comments')
+        .expect(200);
 
     let allComments = allBranchComments.body.comments;
 
@@ -413,14 +413,14 @@ describe("Full Integration test", () => {
     });
     expect(allComments[0]).toEqual({
       _id: expect.any(String),
-      author: "katedillon",
-      body: "You need to re-review the evidence and references for chapter 2 section 3",
+      author: 'katedillon',
+      body: 'You need to re-review the evidence and references for chapter 2 section 3',
       commentDate: expect.any(String),
     });
     expect(allComments[1]).toEqual({
       _id: expect.any(String),
-      author: "benlewry",
-      body: "Blah blah blah blah blah blah blah blah blah blah blah",
+      author: 'benlewry',
+      body: 'Blah blah blah blah blah blah blah blah blah blah blah',
       commentDate: expect.any(String),
     });
 
@@ -428,67 +428,67 @@ describe("Full Integration test", () => {
     const currentApprovalDateTime = String(Date.now());
     const approvalToSetup = {
       type: patchBranchBodyUserAddedResponse.body.branch.type,
-      approvalRequestName: "cg104-chapter-0-approval-request",
+      approvalRequestName: 'cg104-chapter-0-approval-request',
       approvalSetupDateTime: currentApprovalDateTime,
       approvalPurposeDescription:
-        "This is a test approval submission description",
-      branchName: "cg104-chapter-0-edits",
+        'This is a test approval submission description',
+      branchName: 'cg104-chapter-0-edits',
       branchOwner: patchBranchBodyUserAddedResponse.body.branch.branchOwner,
       guideline: patchBranchBodyUserAddedResponse.body.branch.guideline,
     };
 
     const postApprovalResponse = await request(app)
-      .post("/api/approvals?type=edit")
-      .send(approvalToSetup)
-      .expect(201);
+        .post('/api/approvals?type=edit')
+        .send(approvalToSetup)
+        .expect(201);
 
     const postApproval = postApprovalResponse.body.approval;
 
-    expect(postApproval).toHaveProperty("_id");
+    expect(postApproval).toHaveProperty('_id');
     expect(postApproval).toMatchObject({
-      type: "edit",
-      approvalRequestName: "cg104-chapter-0-approval-request",
+      type: 'edit',
+      approvalRequestName: 'cg104-chapter-0-approval-request',
       approvalSetupDateTime: currentApprovalDateTime,
       approvalPurposeDescription:
-        "This is a test approval submission description",
-      branchOwner: "joebloggs",
+        'This is a test approval submission description',
+      branchOwner: 'joebloggs',
       guideline: patchBranchBodyUserAddedResponse.body.branch.guideline,
     });
 
     // 10. Lock the current branch while it's pending approval to stop any further branch edits (PATCH /api/branches/:branch_name/lockbranch)
     const patchBranchToLocked = await request(app)
-      .patch("/api/branches/cg104-chapter-0-edits/lockbranch")
-      .expect(200);
+        .patch('/api/branches/cg104-chapter-0-edits/lockbranch')
+        .expect(200);
 
     expect(patchBranchToLocked.body.branch.branchLockedForApproval).toBe(true);
 
     // 10. GET all Approvals and ensure new approval is there (GET /api/approvals)
     const allApprovalsResponse = await request(app)
-      .get("/api/approvals")
-      .expect(200);
+        .get('/api/approvals')
+        .expect(200);
 
     const allApprovals = allApprovalsResponse.body.approvals;
 
     expect(allApprovals).toBeInstanceOf(Array);
     expect(allApprovals).toHaveLength(1);
     expect(allApprovals[0].approvalRequestName).toBe(
-      "cg104-chapter-0-approval-request"
+        'cg104-chapter-0-approval-request',
     );
 
     // 12. GET Single Approval, new one created (GET /api/approval/:approval_name)
     const singleApprovalResponse = await request(app)
-      .get("/api/approvals/cg104-chapter-0-approval-request")
-      .expect(200);
+        .get('/api/approvals/cg104-chapter-0-approval-request')
+        .expect(200);
 
     const singleApproval = singleApprovalResponse.body.approval;
 
     expect(singleApproval).toBeInstanceOf(Object);
     expect(singleApproval).toMatchObject({
       _id: expect.any(String),
-      type: "edit",
-      approvalRequestName: "cg104-chapter-0-approval-request",
+      type: 'edit',
+      approvalRequestName: 'cg104-chapter-0-approval-request',
       approvalSetupDateTime: expect.any(String),
-      branchOwner: "joebloggs",
+      branchOwner: 'joebloggs',
       guideline: patchBranchBodyUserAddedResponse.body.branch.guideline,
     });
 
@@ -496,40 +496,40 @@ describe("Full Integration test", () => {
     // --> Also POST a new comment to the existing branch with a reason for the rejection/denial of approval
     // --> would have a test here to delete the approval but done below and test proved so skipping it
     const patchBranchToUnlocked = await request(app)
-      .patch("/api/branches/cg104-chapter-0-edits/unlockbranch")
-      .expect(200);
+        .patch('/api/branches/cg104-chapter-0-edits/unlockbranch')
+        .expect(200);
 
     expect(patchBranchToUnlocked.body.branch.branchLockedForApproval).toBe(
-      false
+        false,
     );
 
     commentDateNow = Date.now();
 
     newComment = {
-      author: "jackprince",
-      body: "Approval has been declined on 25th June 2023 as several resources could not be verified and there is 1 spelling mistake in Chapter 4 section 2 which requires attention.",
+      author: 'jackprince',
+      body: 'Approval has been declined on 25th June 2023 as several resources could not be verified and there is 1 spelling mistake in Chapter 4 section 2 which requires attention.',
       commentDate: commentDateNow,
     };
 
     const approverCommentSubmission = await request(app)
-      .post("/api/branches/cg104-chapter-0-edits/comments")
-      .send({ newComment })
-      .expect(200);
+        .post('/api/branches/cg104-chapter-0-edits/comments')
+        .send({newComment})
+        .expect(200);
 
     const approverComment = approverCommentSubmission.body.comment;
 
     expect(approverComment).toBeInstanceOf(Object);
     expect(approverComment).toEqual({
       _id: expect.any(String),
-      author: "jackprince",
-      body: "Approval has been declined on 25th June 2023 as several resources could not be verified and there is 1 spelling mistake in Chapter 4 section 2 which requires attention.",
+      author: 'jackprince',
+      body: 'Approval has been declined on 25th June 2023 as several resources could not be verified and there is 1 spelling mistake in Chapter 4 section 2 which requires attention.',
       commentDate: expect.any(String),
     });
 
     // 13.5 - Check the comment was added (Should now be 3 comments on this branch)
     allBranchComments = await request(app)
-      .get("/api/branches/cg104-chapter-0-edits/comments")
-      .expect(200);
+        .get('/api/branches/cg104-chapter-0-edits/comments')
+        .expect(200);
 
     allComments = allBranchComments.body.comments;
 
@@ -545,14 +545,14 @@ describe("Full Integration test", () => {
     });
     expect(allComments[2]).toEqual({
       _id: expect.any(String),
-      author: "jackprince",
-      body: "Approval has been declined on 25th June 2023 as several resources could not be verified and there is 1 spelling mistake in Chapter 4 section 2 which requires attention.",
+      author: 'jackprince',
+      body: 'Approval has been declined on 25th June 2023 as several resources could not be verified and there is 1 spelling mistake in Chapter 4 section 2 which requires attention.',
       commentDate: expect.any(String),
     });
 
     // 14. Now, assume the Approval request is APPROVED, first PATCH this finalised edited guideline to the main Guidelines endpoint AND that the Version number has incremented by +1 (PATCH /guidelines/:guideline_id)
     const patchedGuideline = structuredClone(
-      patchBranchBodyUserAddedResponse.body.branch.guideline
+        patchBranchBodyUserAddedResponse.body.branch.guideline,
     );
 
     const dateNow = Date.now();
@@ -560,84 +560,84 @@ describe("Full Integration test", () => {
     const submissionInfo = {
       ChangeNumber: 0,
       ChangeDescription:
-        "Amends CG104 Chapter 1 with edits to the Factors influencing management decisions section to make points 1 and 2 clearer",
-      ChangeOwner: "joebloggs",
+        'Amends CG104 Chapter 1 with edits to the Factors influencing management decisions section to make points 1 and 2 clearer',
+      ChangeOwner: 'joebloggs',
       ChangeDatePublished: dateNow,
     };
 
     const patchGuidelineResponse = await request(app)
-      .patch("/api/guidelines/CG104")
-      .send({ patchedGuideline, submissionInfo })
-      .expect(200);
+        .patch('/api/guidelines/CG104')
+        .send({patchedGuideline, submissionInfo})
+        .expect(200);
 
     const patchGuidelineInfo = patchGuidelineResponse.body.guideline;
 
     expect(
-      patchGuidelineInfo.Chapters[chapterNum].Sections[sectionNum].SectionId
-    ).toBe("13-factors-influencing-management-decisions");
+        patchGuidelineInfo.Chapters[chapterNum].Sections[sectionNum].SectionId,
+    ).toBe('13-factors-influencing-management-decisions');
     expect(
-      patchGuidelineInfo.Chapters[chapterNum].Sections[sectionNum].Title
-    ).toBe("1.3 Factors influencing management decisions");
+        patchGuidelineInfo.Chapters[chapterNum].Sections[sectionNum].Title,
+    ).toBe('1.3 Factors influencing management decisions');
     expect(
-      patchGuidelineInfo.Chapters[chapterNum].Sections[sectionNum].Content
+        patchGuidelineInfo.Chapters[chapterNum].Sections[sectionNum].Content,
     ).toEqual(expected);
     expect(patchGuidelineInfo.GuidelineCurrentVersion).toEqual(2.0);
     expect(patchGuidelineInfo.GuidelineChangeHistoryDescriptions[0]).toEqual({
       ChangeNumber: 0,
       ChangeDescription:
-        "Amends CG104 Chapter 1 with edits to the Factors influencing management decisions section to make points 1 and 2 clearer",
-      ChangeOwner: "joebloggs",
+        'Amends CG104 Chapter 1 with edits to the Factors influencing management decisions section to make points 1 and 2 clearer',
+      ChangeOwner: 'joebloggs',
       ChangeDatePublished: dateNow,
     });
 
     // 15. Now delete the relevant branch as approval is successful (DELETE /api/branches/:branch_name)
     await request(app)
-      .delete("/api/branches/cg104-chapter-0-edits")
-      .expect(204);
+        .delete('/api/branches/cg104-chapter-0-edits')
+        .expect(204);
 
     // 16. Now delete the approval as approval is successful and previous 2 requests were successful (DELETE /api/approvals/:approval_name)
     await request(app)
-      .delete("/api/approvals/cg104-chapter-0-approval-request")
-      .expect(204);
+        .delete('/api/approvals/cg104-chapter-0-approval-request')
+        .expect(204);
 
     // 17. Now do a final GET Single Guideline and check the edits have been made, and that they are now part of the new main version which users would see (GET /api/guidelines/:guideline_id)
     const finalSingleGuidelineResponse = await request(app)
-      .get("/api/guidelines/CG104")
-      .expect(200);
+        .get('/api/guidelines/CG104')
+        .expect(200);
 
     const finalSingleGuideline = finalSingleGuidelineResponse.body.guideline;
 
     expect(finalSingleGuideline).toBeInstanceOf(Object);
     expect(finalSingleGuideline).toMatchObject({
       _id: expect.any(String),
-      GuidanceNumber: "CG104",
+      GuidanceNumber: 'CG104',
       GuidanceSlug:
-        "metastatic-malignant-disease-of-unknown-primary-origin-in-adults-diagn-cg104",
-      GuidanceType: "Clinical guideline",
+        'metastatic-malignant-disease-of-unknown-primary-origin-in-adults-diagn-cg104',
+      GuidanceType: 'Clinical guideline',
       LongTitle:
-        "Metastatic malignant disease of unknown primary origin in adults: diagnosis and management (CG104)",
+        'Metastatic malignant disease of unknown primary origin in adults: diagnosis and management (CG104)',
       MetadataApplicationProfile: expect.any(Object),
       NHSEvidenceAccredited: true,
       InformationStandardAccredited: false,
       Chapters: expect.any(Array),
-      LastModified: "/Date(1682502323341+0100)/",
-      Uri: "https://api.nice.org.uk/services/guidance/structured-documents/CG104",
+      LastModified: '/Date(1682502323341+0100)/',
+      Uri: 'https://api.nice.org.uk/services/guidance/structured-documents/CG104',
       Title:
-        "Metastatic malignant disease of unknown primary origin in adults: diagnosis and management",
+        'Metastatic malignant disease of unknown primary origin in adults: diagnosis and management',
       TitleContent: null,
       GuidelineCurrentVersion: 2,
       GuidelineChangeHistoryDescriptions: [
         {
           ChangeNumber: 0,
           ChangeDescription:
-            "Amends CG104 Chapter 1 with edits to the Factors influencing management decisions section to make points 1 and 2 clearer",
-          ChangeOwner: "joebloggs",
+            'Amends CG104 Chapter 1 with edits to the Factors influencing management decisions section to make points 1 and 2 clearer',
+          ChangeOwner: 'joebloggs',
           ChangeDatePublished: String(dateNow),
         },
       ],
     });
     expect(
-      finalSingleGuideline.Chapters[chapterNum].Sections[sectionNum].Content
+        finalSingleGuideline.Chapters[chapterNum].Sections[sectionNum].Content,
     ).toEqual(expected);
   });
 });

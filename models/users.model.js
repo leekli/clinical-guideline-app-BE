@@ -1,4 +1,4 @@
-const userSchema = require("../schemas/UserSchema.js");
+const userSchema = require('../schemas/UserSchema.js');
 
 exports.findAllUsers = async () => {
   const users = await userSchema.find({});
@@ -11,7 +11,7 @@ exports.findUserByUsername = async (username) => {
     userName: username,
   });
 
-  return user.length !== 0
-    ? user[0]
-    : Promise.reject({ status: 404, msg: "Username not found" });
+  return user.length !== 0 ?
+    user[0] :
+    Promise.reject({status: 404, msg: 'Username not found'});
 };
